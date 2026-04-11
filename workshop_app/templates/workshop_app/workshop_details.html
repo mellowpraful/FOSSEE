@@ -5,80 +5,292 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <table class="table table-bordered">
-            <tr>
-                <th><label for="id_first_name">Workshop Type :</label></th>
-                <td><label for="id_first_name"><a
-                        href="{% url 'workshop_app:workshop_type_details' workshop.workshop_type_id %}">{{ workshop.workshop_type }}</a></label>
-                </td>
-            </tr>
-            <tr>
-                <th><label for="id_last_name">Date :</label></th>
-                <td><label for="id_last_name">{{ workshop.date }}</label></td>
-            </tr>
-            <tr>
-                <th><label for="id_email">Coordinator :</label></th>
-                <td><label for="id_email">{{ workshop.coordinator.get_full_name|title }}</label>
-                </td>
-            </tr>
-            {% if workshop.status %}
-                <tr>
-                    <th><label for="id_institute">Status :</label></th>
-                    <td><span class="badge badge-success">{{ workshop.get_status }}</span></td>
-                </tr>
-                <tr>
-                    <th><label for="id_phone_number">Instructor :</label></th>
-                    <td><label for="id_email">{{ workshop.instructor.get_full_name|title }}</label>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <th><label for="id_institute">Status :</label></th>
-                    <td><span class="badge badge-warning">{{ workshop.get_status }}</span></td>
-                </tr>
-            {% endif %}
-        </table>
-        <br>
-        <div class="container">
-            <div class="card mt-2 mb-5">
-                <form method="post">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="mx-3 font-weight-bold">Post a comment</div>
-                            {% if request.user.profile.position == 'instructor' %}
-                                <div class="ml-5">{{ form.public }} Public</div>
-                                <div class="ml-1 text-muted">(Non-public comments are visible only to instructors)</div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        {{ form.comment }}
-                    </div>
-                    <button type="submit" class="float-right btn btn-primary btn-md m-2">Post</button>
-                </form>
+    <style type="text/css">
+        .workshop-details-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .details-item {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .details-item-full {
+            grid-column: 1 / -1;
+        }
+
+        .details-item label {
+            display: block;
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .details-item p {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .details-item a {
+            color: #17a2b8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .details-item a:hover {
+            text-decoration: underline;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin: 2rem 0 1.5rem 0;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .comment-form {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin-bottom: 2rem;
+        }
+
+        .comment-form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .comment-form-header h4 {
+            margin: 0;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 14px;
+        }
+
+        .comment-form textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+            min-height: 100px;
+            margin-bottom: 1rem;
+        }
+
+        .comment-form textarea:focus {
+            outline: none;
+            border-color: #17a2b8;
+            box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.1);
+        }
+
+        .comment-form .btn {
+            width: 100%;
+        }
+
+        .comment-item {
+            background-color: white;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .comment-header {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .comment-author a {
+            color: #17a2b8;
+            text-decoration: none;
+        }
+
+        .comment-author a:hover {
+            text-decoration: underline;
+        }
+
+        .comment-meta {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .comment-badge {
+            font-size: 12px;
+        }
+
+        .comment-body {
+            padding: 1.5rem;
+        }
+
+        .comment-body p {
+            margin: 0;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        @media (max-width: 767px) {
+            .workshop-details-container {
+                padding: 0;
+                padding-top: 1rem;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .details-item-full {
+                grid-column: 1;
+            }
+
+            .comment-form-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .comment-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .card {
+                border-radius: 0;
+                box-shadow: none;
+            }
+        }
+    </style>
+
+    <div class="workshop-details-container">
+        <h2 style="text-align: center; margin-bottom: 2rem;">Workshop Details</h2>
+
+        <!-- Details Grid -->
+        <div class="details-grid">
+            <div class="details-item">
+                <label>Workshop Type</label>
+                <p>
+                    <a href="{% url 'workshop_app:workshop_type_details' workshop.workshop_type_id %}">
+                        {{ workshop.workshop_type }}
+                    </a>
+                </p>
             </div>
-            <br><br>
-            <h2 class="text-center">Comments</h2>
-            <br>
-            {% for comment in workshop_comments %}
-                <div class="card my-2">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="ml-3 font-weight-bold"><a
-                                    href="{% url 'workshop_app:view_profile' comment.author_id %}">{{ comment.author }}</a></div>
-                            {% if not comment.public %}
-                                <div class="ml-1"><span class="badge badge-dark">Hidden</span></div>
-                            {% endif %}
-                            <div class="ml-3 text-muted">{{ comment.created_date }}</div>
+            <div class="details-item">
+                <label>Workshop Date</label>
+                <p>{{ workshop.date }}</p>
+            </div>
+            <div class="details-item">
+                <label>Coordinator</label>
+                <p>{{ workshop.coordinator.get_full_name|title }}</p>
+            </div>
+            <div class="details-item">
+                <label>Status</label>
+                <p>
+                    {% if workshop.status %}
+                        <span class="badge" style="background-color: #28a745; color: white;">{{ workshop.get_status }}</span>
+                    {% else %}
+                        <span class="badge" style="background-color: #ffc107; color: #333;">{{ workshop.get_status }}</span>
+                    {% endif %}
+                </p>
+            </div>
+            {% if workshop.status %}
+                <div class="details-item details-item-full">
+                    <label>Assigned Instructor</label>
+                    <p>{{ workshop.instructor.get_full_name|title }}</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Comments Section -->
+        <h3 class="section-title">Discussion & Comments</h3>
+
+        <!-- Comment Form -->
+        <div class="comment-form">
+            <form method="post">
+                {% csrf_token %}
+                <div class="comment-form-header">
+                    <h4>Post a Comment</h4>
+                    {% if request.user.profile.position == 'instructor' %}
+                        <div class="checkbox-group">
+                            {{ form.public }} <label for="{{ form.public.id_for_label }}">Make Public</label>
                         </div>
+                    {% endif %}
+                </div>
+                {% if request.user.profile.position == 'instructor' %}
+                    <small class="text-muted" style="display: block; margin-bottom: 1rem;">
+                        Non-public comments are visible only to instructors
+                    </small>
+                {% endif %}
+                {{ form.comment }}
+                <button type="submit" class="btn btn-primary">Post Comment</button>
+            </form>
+        </div>
+
+        <!-- Comments List -->
+        {% if workshop_comments %}
+            <h4 style="margin: 2rem 0 1rem 0;">Recent Comments</h4>
+            {% for comment in workshop_comments %}
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <div style="flex: 1;">
+                            <span class="comment-author">
+                                <a href="{% url 'workshop_app:view_profile' comment.author_id %}">
+                                    {{ comment.author }}
+                                </a>
+                            </span>
+                            <span class="comment-meta">{{ comment.created_date }}</span>
+                        </div>
+                        {% if not comment.public %}
+                            <span class="badge comment-badge" style="background-color: #6c757d; color: white;">
+                                Instructor Only
+                            </span>
+                        {% endif %}
                     </div>
-                    <div class="card-body">
-                        <p>{{ comment.comment }}</p>
+                    <div class="comment-body">
+                        {{ comment.comment }}
                     </div>
                 </div>
             {% endfor %}
-        </div>
+        {% else %}
+            <div style="text-align: center; padding: 2rem; background-color: #f8f9fa; border-radius: 4px;">
+                <p class="text-muted">No comments yet. Be the first to discuss!</p>
+            </div>
+        {% endif %}
     </div>
 
 {% endblock %}
