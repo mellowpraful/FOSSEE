@@ -28,7 +28,6 @@
                 beforeShowDay: $.datepicker.noWeekends,
             });
 
-
             $('#disp_tnc').click(function (e) {
                 e.preventDefault()
                 if ($('#id_workshop_type').val() === '')
@@ -46,74 +45,240 @@
     </script>
 {% endblock %}
 
-
 {% block content %}
     <style type="text/css">
-        .errorlist {
-            color: red;
+        .propose-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
         }
 
-    .modal-open .modal{
-        overflow-y: hidden;
-    }
+        .info-box {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 4px;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #0c5460;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #17a2b8;
+            box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+            font-size: 14px;
+        }
+
+        .checkbox-group a {
+            color: #17a2b8;
+            text-decoration: none;
+        }
+
+        .checkbox-group a:hover {
+            text-decoration: underline;
+        }
+
+        .error-box {
+            background-color: #fff5f5;
+            border-left: 4px solid #dc3545;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+
+        .error-box h5 {
+            color: #dc3545;
+            margin-top: 0;
+        }
+
+        .error-box .errorlist {
+            color: #dc3545;
+            margin: 0.5rem 0 0 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .error-box li {
+            margin-bottom: 0.25rem;
+            font-size: 13px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-dialog {
+            max-width: 500px;
+        }
+
+        .modal-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        @media (max-width: 767px) {
+            .propose-container {
+                padding: 0;
+                padding-top: 1rem;
+            }
+
+            .card {
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+        }
     </style>
 
-    <div class="container" align="center">
-        <div class="alert alert-info">
-            Note: Before proposing the workshop, please check about the workshop in the
-            <strong>Workshop Types</strong> section
+    <div class="propose-container">
+        <div class="page-title">
+            <h2>Propose a Workshop</h2>
         </div>
-        <br><br>
-        <div class="col-md-6 col-md-offset-6">
-            <div class="card border-primary">
-                <div class="card-header">
-                    <h3>Propose Workshop</h3>
-                </div>
-                <div class="card-body">
+
+        <div class="info-box">
+            <p>
+                <strong>Tip:</strong> Before proposing a workshop, please review the details in the 
+                <a href="{% url 'workshop_app:workshop_type_list' %}" style="color: #0c5460; font-weight: 600;">Workshop Types</a> section.
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 style="margin: 0;">Propose Workshop</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                        <div class="error-box">
+                            <h5>Please correct the errors below:</h5>
+                            {% if form.non_field_errors %}
+                                <ul class="errorlist">
+                                    {% for error in form.non_field_errors %}
+                                        <li>{{ error|escape }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                            {% for field in form %}
+                                {% if field.errors %}
+                                    <ul class="errorlist">
+                                        {% for error in field.errors %}
+                                            <li><strong>{{ field.label }}:</strong> {{ error|escape }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
                     <div class="form-group">
-                        <form method="post">
-                            {% csrf_token %}
-                            <br/>
-                            {{ form.workshop_type }}
-                            <br>
-                            {{ form.date }}
-                            <br>
-                            {{ form.tnc_accepted }} I accept the
-                            <a href="#" id="disp_tnc" data-toggle="modal"
-                            data-target="#exampleModalCenter">
+                        <label class="required" for="{{ form.workshop_type.id_for_label }}">Workshop Type</label>
+                        {{ form.workshop_type }}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required" for="{{ form.date.id_for_label }}">Workshop Date</label>
+                        {{ form.date }}
+                        <small class="help-text" style="display: block; margin-top: 0.5rem; color: #6c757d; font-size: 12px;">
+                            Select a date at least 3 days from today. Weekends only.
+                        </small>
+                    </div>
+
+                    <div class="checkbox-group">
+                        {{ form.tnc_accepted }}
+                        <label for="{{ form.tnc_accepted.id_for_label }}">
+                            I accept the
+                            <a href="#" id="disp_tnc" data-toggle="modal" data-target="#exampleModalCenter">
                                 terms and conditions
                             </a>
-                            <br>
-                            {% if form.errors %}
-                                <br>
-                                <div style="text-align: left; border: 1px solid red; padding-top: 5px">
-                                    <h5 style="text-align: center; color: red; font-weight: bolder">Errors</h5>
-                                    {{ form.errors }}
-                                </div>
-                            {% endif %}
-                            <br>
-                            <button class="btn btn-success" type="submit">Submit</button>
-                        </form>
+                        </label>
                     </div>
-                </div>
+
+                    <button type="submit" class="btn btn-success btn-submit">
+                        Submit Proposal
+                    </button>
+                </form>
             </div>
         </div>
-        <br>
-
     </div>
-    <!-- Modal -->
+
+    <!-- Terms & Conditions Modal -->
     <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
          aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Terms and Conditions</h5>
+                    <h5 class="modal-title">Terms and Conditions</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-
+                    <!-- Content loaded via AJAX -->
                 </div>
             </div>
         </div>

@@ -4,126 +4,340 @@
 
 {% csrf_token %}
 {% block content %}
+    <style type="text/css">
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
 
-    <div class="container">
+        .profile-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-info-item {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .profile-info-item label {
+            display: block;
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-info-item p {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin: 2rem 0 1.5rem 0;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .workshops-table {
+            width: 100%;
+            margin-bottom: 2rem;
+            border-collapse: collapse;
+        }
+
+        .workshops-table thead {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .workshops-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .workshops-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            background-color: #ffc107;
+            color: #333;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .edit-form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #17a2b8;
+            box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .button-group .btn {
+            flex: 1;
+            margin: 0;
+        }
+
+        @media (max-width: 767px) {
+            .profile-container {
+                padding: 0;
+                padding-top: 1rem;
+            }
+
+            .profile-info {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .button-group .btn {
+                width: 100%;
+            }
+
+            .workshops-table thead {
+                display: none;
+            }
+
+            .workshops-table tbody tr {
+                display: block;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                margin-bottom: 1rem;
+                padding: 1rem;
+                overflow: hidden;
+            }
+
+            .workshops-table tbody td {
+                display: block;
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+                border: none;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .workshops-table tbody td:last-child {
+                border-bottom: none;
+            }
+
+            .workshops-table tbody td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 50%;
+                padding: 0;
+                text-align: left;
+                font-weight: 600;
+                color: #666;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .workshops-table thead {
+                display: table-header-group;
+            }
+
+            .workshops-table tbody tr {
+                display: table-row;
+                border: none;
+                margin-bottom: 0;
+                padding: 0;
+            }
+
+            .workshops-table tbody td {
+                display: table-cell;
+                text-align: left;
+                padding: 0.75rem 1rem;
+                position: relative;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            .workshops-table tbody td::before {
+                display: none;
+            }
+        }
+    </style>
+
+    <div class="profile-container">
         {% if Workshops %}
-            <table class="table table-bordered">
-                <tr>
-                    <th><label for="id_first_name"><h5>First name:</h5></label></th>
-                    <th><label for="id_first_name"><h5>{{ coordinator_profile.user.first_name }}</h5></label></th>
-                </tr>
-                <tr>
-                    <th><label for="id_last_name"><h5>Last name:</h5></label></th>
-                    <th><label for="id_last_name"><h5>{{ coordinator_profile.user.last_name }}</h5></label></th>
-                </tr>
-                <tr>
-                    <th><label for="id_email"><h5>Email:</h5></label></th>
-                    <th><label for="id_email"><h5>{{ coordinator_profile.user.email }}</h5></label></th>
-                </tr>
-                <tr>
-                    <th><label for="id_institute"><h5>Institute:</h5></label></th>
-                    <th><label for="id_institute"><h5>{{ coordinator_profile.user.profile.institute }}</h5></label></th>
-                </tr>
-                <tr>
-                    <th><label for="id_phone_number"><h5>Phone Number:</h5></label></th>
-                    <th><label for="id_phone_number"><h5>{{ coordinator_profile.user.profile.phone_number }}</h5></label>
-                    </th>
-                </tr>
-                <tr>
-                    <th><label for="id_department"><h5>Department:</h5></label></th>
-                    <th><label for="id_department"><h5>{{ coordinator_profile.user.profile.department }}</h5></label></th>
-                </tr>
-                <tr>
-                    <th><label for="id_location"><h5>Location:</h5></label></th>
-                    <th><label for="id_location"><h5>{{ coordinator_profile.user.profile.location }}</h5></label></th>
-                </tr>
-                <tr>
-                    <th><label for="id_position"><h5>Position:</h5></label></th>
-                    <th><label for="id_position"><h5>{{ coordinator_profile.user.profile.position }}</h5></label></th>
-                </tr>
-            </table>
-            <br>
-
-            <div class="container">
-            <h2>Workshop Details</h2>
-            <table class="table table-bordered">
-            <tr>
-                <th><label for="id_instructor_name">Instructor name</label></th>
-                <th><label for="id_workshop_date">Workshop date</label></th>
-                <th><label for="id_workshop_type">Workshop type</label></th>
-            </tr>
-            {% for workshop in Workshops %}
-                {% if workshop.instructor %}
-                    <tr>
-                        <td><label for="id_instructor_name">{{ workshop.instructor }}
-                        </label></td>
-                        <td><label for="id_workshop_date">{{ workshop.date }}</label>
-                        </td>
-                        <td><label for="id_workshop_type">{{ workshop.workshop_type }}</label>
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td><span class="badge badge-warning">Pending</span></td>
-                        <td><label for="id_workshop_date">{{ workshop.date }}</label>
-                        </td>
-                        <td><label for="id_workshop_type">{{ workshop.workshop_type }}</label>
-                        </td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-            </table>
+            <!-- Profile Information Display -->
+            <h2 style="text-align: center; margin-bottom: 2rem;">User Profile</h2>
+            
+            <div class="profile-info">
+                <div class="profile-info-item">
+                    <label>First Name</label>
+                    <p>{{ coordinator_profile.user.first_name }}</p>
+                </div>
+                <div class="profile-info-item">
+                    <label>Last Name</label>
+                    <p>{{ coordinator_profile.user.last_name }}</p>
+                </div>
+                <div class="profile-info-item">
+                    <label>Email</label>
+                    <p>{{ coordinator_profile.user.email }}</p>
+                </div>
+                <div class="profile-info-item">
+                    <label>Institute</label>
+                    <p>{{ coordinator_profile.user.profile.institute }}</p>
+                </div>
+                <div class="profile-info-item">
+                    <label>Phone Number</label>
+                    <p>{{ coordinator_profile.user.profile.phone_number }}</p>
+                </div>
+                <div class="profile-info-item">
+                    <label>Department</label>
+                    <p>{{ coordinator_profile.user.profile.department }}</p>
+                </div>
+                <div class="profile-info-item">
+                    <label>Location</label>
+                    <p>{{ coordinator_profile.user.profile.location }}</p>
+                </div>
+                <div class="profile-info-item">
+                    <label>Position</label>
+                    <p>{{ coordinator_profile.user.profile.position }}</p>
+                </div>
             </div>
-            <br><br>
+
+            <a href="{% url 'workshop_app:view_own_profile' %}" class="btn btn-primary" style="margin-bottom: 2rem;">
+                Edit Profile
+            </a>
+
+            <!-- Workshop Details -->
+            <h3 class="section-title">My Workshops</h3>
+            
+            <div style="overflow-x: auto;">
+                <table class="workshops-table">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Instructor</th>
+                            <th>Workshop Date</th>
+                            <th>Workshop Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for workshop in Workshops %}
+                        <tr>
+                            <td data-label="Status">
+                                {% if workshop.instructor %}
+                                    <span class="badge" style="background-color: #28a745; color: white;">Assigned</span>
+                                {% else %}
+                                    <span class="badge">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Instructor">
+                                {{ workshop.instructor|default:"—" }}
+                            </td>
+                            <td data-label="Date">
+                                {{ workshop.date }}
+                            </td>
+                            <td data-label="Type">
+                                {{ workshop.workshop_type }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
         {% else %}
-            <form action="" method="post">
-              {% csrf_token %}
-                <div class="row justify-content-center form-group">
-                    <div class="col-md-6">
-                    <form action="" method="post">
-                        <fieldset>
-                            {% csrf_token %}
-                            {% if form.errors %}
-                                {% for field in form %}
-                                    {% for error in field.errors %}
-                                        <div class="alert alert-dismissible alert-danger">
-                                            <button type="button" class="close" data-dismiss="alert">
-                                                <i class="fa fa-close"></i>
-                                            </button>
-                                            <strong>{{field.label}} : {{ error|escape }}</strong>
-                                        </div>
-                                    {% endfor %}
-                                {% endfor %}
-                                {% for error in form.non_field_errors %}
-                                    <div class="alert alert-dismissible alert-danger">
-                                        <button type="button" class="close" data-dismiss="alert">
-                                            <i class="fa fa-close"></i>
-                                        </button>
-                                        <strong>{{field.label}} : {{ error|escape }}</strong>
+            <!-- Profile Edit Form -->
+            <h2 style="text-align: center; margin-bottom: 2rem;">Update Your Profile</h2>
+            
+            <div class="edit-form-container">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Please correct the errors below:</strong>
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <div style="margin-top: 0.5rem;">
+                                        <strong>{{ field.label }}:</strong> {{ error|escape }}
                                     </div>
                                 {% endfor %}
-                            {% endif %}
-                            <table class="table table-responsive-sm">
-                                <tr><td>{{form.title}}</td></tr>
-                                <tr><td>{{form.first_name}}</td></tr>
-                                <tr><td>{{form.last_name}}</td></tr>
-                                <tr><td>{{form.phone_number}}</td></tr>
-                                <tr><td>{{form.institute}}</td></tr>
-                                <tr><td>{{form.department}}</td></tr>
-                                <tr><td>{{form.position}}</td></tr>
-                                <tr><td>{{form.location}}</td></tr>
-                                <tr><td>{{form.state}}</td></tr>
-                            </table>
-                            <br>
-                        </fieldset>
-                        <button class="btn btn-success btn-lg" type="submit">
-                            <i class="fa fa-pencil-square-o"></i>&nbsp;Update</button>
-                        <a href="{% url 'workshop_app:index' %}" class="btn btn-primary btn-lg">Cancel
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <div style="margin-top: 0.5rem;">
+                                    {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                    {% endfor %}
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-success">
+                            Update Profile
+                        </button>
+                        <a href="{% url 'workshop_app:index' %}" class="btn btn-secondary">
+                            Cancel
                         </a>
-                    </form>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         {% endif %}
     </div>
 {% endblock %}
