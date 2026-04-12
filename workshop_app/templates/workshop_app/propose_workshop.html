@@ -183,21 +183,23 @@
 
         /* Checkbox Group */
         .checkbox-group {
-            display: flex;
-            align-items: flex-start;
+            display: block;
             margin: 1.5rem 0;
-            gap: 0.75rem;
-            flex-wrap: wrap;
+            width: 100%;
+            overflow: visible;
         }
 
         .checkbox-group input[type="checkbox"] {
             width: 20px;
             height: 20px;
             margin: 0;
+            margin-right: 0.75rem;
             margin-top: 2px;
+            padding: 0;
             cursor: pointer;
             accent-color: var(--color-primary);
-            flex-shrink: 0;
+            float: left;
+            clear: left;
         }
 
         .checkbox-group label {
@@ -208,11 +210,11 @@
             font-size: 0.95rem;
             line-height: 1.5;
             color: var(--color-text-primary);
+            display: block;
+            margin-left: 26px;
+            white-space: normal;
             word-wrap: break-word;
             overflow-wrap: break-word;
-            white-space: normal;
-            flex: 1;
-            min-width: 200px;
         }
 
         .checkbox-group a {
