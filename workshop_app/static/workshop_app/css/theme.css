@@ -375,3 +375,55 @@ html[data-theme="dark"] .content-card {
     border-color: var(--color-border-main) !important;
     color: var(--color-text-primary) !important;
 }
+
+/* Force dark mode on ALL inline styles */
+html[data-theme="dark"] [style*="background-color: #3d4f5c"],
+html[data-theme="dark"] [style*="color: #2c3e50"],
+html[data-theme="dark"] [style*="color: #34495e"],
+html[data-theme="dark"] [style*="color: #555"],
+html[data-theme="dark"] [style*="color: #666"],
+html[data-theme="dark"] [style*="color: #7f8c8d"],
+html[data-theme="dark"] [style*="color: #16a085"],
+html[data-theme="dark"] [style*="border-bottom: 1px solid #e8eef5"],
+html[data-theme="dark"] [style*="border-bottom: 1px solid #e9ecef"],
+html[data-theme="dark"] [style*="border-top: 1px solid #e8eef5"],
+html[data-theme="dark"] [style*="border-top: 1px solid #e9ecef"] {
+    color: var(--color-text-primary) !important;
+    border-color: var(--color-border-light) !important;
+}
+
+/* Dialog/Modal styling for dark theme */
+html[data-theme="dark"] #dialog {
+    background-color: var(--color-card-bg) !important;
+    color: var(--color-text-primary) !important;
+    border: 1px solid var(--color-border-main) !important;
+}
+
+html[data-theme="dark"] .ui-dialog {
+    background-color: var(--color-card-bg) !important;
+    border: 1px solid var(--color-border-main) !important;
+}
+
+html[data-theme="dark"] .ui-dialog-titlebar {
+    background-color: var(--color-bg-tertiary) !important;
+    border-bottom: 1px solid var(--color-border-main) !important;
+    color: var(--color-text-primary) !important;
+}
+
+html[data-theme="dark"] .ui-dialog-title {
+    color: var(--color-text-primary) !important;
+}
+
+html[data-theme="dark"] .ui-dialog .ui-dialog-buttonpane {
+    background-color: var(--color-bg-secondary) !important;
+    border-top: 1px solid var(--color-border-main) !important;
+}
+
+/* Stats controls - borders */
+html[data-theme="dark"] .stats-controls {
+    border-bottom-color: var(--color-border-light) !important;
+}
+
+html[data-theme="dark"] .bottom-paginator {
+    border-top-color: var(--color-border-light) !important;
+}
