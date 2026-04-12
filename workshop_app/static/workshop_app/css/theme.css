@@ -34,7 +34,11 @@
 }
 
 html[data-theme="dark"],
-html[data-theme="dark"] * {
+html[data-theme="dark"] body,
+html[data-theme="dark"] div,
+html[data-theme="dark"] span,
+html[data-theme="dark"] p,
+html[data-theme="dark"] table {
     --color-bg-primary: #1a1a1a !important;
     --color-bg-secondary: #242424 !important;
     --color-bg-tertiary: #2d2d2d !important;
@@ -426,4 +430,36 @@ html[data-theme="dark"] .stats-controls {
 
 html[data-theme="dark"] .bottom-paginator {
     border-top-color: var(--color-border-light) !important;
+}
+
+/* Force white background overrides in dark mode - VERY SPECIFIC */
+html[data-theme="dark"] div[style*="background-color: white"] {
+    background-color: var(--color-card-bg) !important !important !important;
+}
+
+html[data-theme="dark"] [style*="background-color: #fafbfc"],
+html[data-theme="dark"] [style*="background: #fafbfc"] {
+    background-color: var(--color-card-bg) !important;
+}
+
+html[data-theme="dark"] [style*="background: linear-gradient"] {
+    background: linear-gradient(to bottom, var(--color-bg-tertiary), var(--color-bg-secondary)) !important;
+}
+
+/* Specific classes - very aggressive */
+html[data-theme="dark"] .content-card {
+    background-color: #242424 !important;
+    color: #e8e8e8 !important;
+    border-color: #3d3d3d !important;
+}
+
+html[data-theme="dark"] .filters-card {
+    background-color: #242424 !important;
+    color: #e8e8e8 !important;
+    border-color: #3d3d3d !important;
+}
+
+html[data-theme="dark"] .stats-container {
+    background-color: #1a1a1a !important;
+    color: #e8e8e8 !important;
 }
