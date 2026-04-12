@@ -1,98 +1,172 @@
 {% extends 'workshop_app/base.html' %}
 
 {% block title %}
-    Login
+    Sign In - FOSSEE Workshops
 {% endblock %}
 
 {% block content %}
     <style>
-        /* Centered login card - should be narrower on desktop */
-        .login-container {
+        /* Login page layout */
+        .login-wrapper {
             display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: flex-start;
-            min-height: calc(100vh - 160px);
-            padding: 1rem;
+            min-height: calc(100vh - 180px);
+            padding: 2rem 1rem;
         }
 
-        .login-card {
+        .login-box {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
         }
 
-        .login-card .card-header h3 {
+        .login-box .card {
+            overflow: hidden;
+        }
+
+        .login-box .card-header {
+            padding: 2rem 1.5rem;
+            background: linear-gradient(135deg, var(--color-primary) 0%, #0056b3 100%);
+            color: white;
             text-align: center;
+        }
+
+        .login-box .card-header h3 {
             margin: 0;
+            font-size: 1.75rem;
+            color: white;
+        }
+
+        .login-box .card-body {
+            padding: 2rem;
+        }
+
+        .form-group input {
+            padding: 0.95rem !important;
+            font-size: 1rem !important;
+        }
+
+        .form-group input:focus {
+            border-color: var(--color-primary) !important;
+        }
+
+        .btn-signin {
+            width: 100%;
+            padding: 0.95rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border-radius: 6px;
+            margin-top: 0.5rem;
+        }
+
+        .login-divider {
+            text-align: center;
+            margin: 1.75rem 0;
+            position: relative;
+        }
+
+        .login-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: var(--color-border-light);
+        }
+
+        .login-divider span {
+            background-color: var(--color-card-bg);
+            padding: 0 0.75rem;
+            position: relative;
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
         }
 
         .login-links {
-            text-align: center;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1rem;
         }
 
         .login-links a {
-            display: block;
-            color: #17a2b8;
+            display: inline-block;
+            color: var(--color-primary);
             text-decoration: none;
-            font-size: 14px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
             padding: 0.5rem 0;
         }
 
         .login-links a:hover {
             text-decoration: underline;
+            opacity: 0.8;
         }
 
-        @media (max-width: 767px) {
-            .login-card {
+        @media (max-width: 576px) {
+            .login-box {
                 max-width: 100%;
+            }
+
+            .login-box .card-body {
+                padding: 1.5rem;
+            }
+
+            .login-box .card-header {
+                padding: 1.5rem;
             }
         }
     </style>
 
-    <div class="login-container">
-        <div class="login-card">
+    <div class="login-wrapper">
+        <div class="login-box">
             <div class="card">
                 <div class="card-header">
                     <h3>Sign In</h3>
                 </div>
                 <div class="card-body">
-                    <form method="post">
+                    <form method="post" novalidate>
                     {% csrf_token %}
+                    
                     {% if form.errors %}
                         {% for field in form %}
                             {% for error in field.errors %}
                                 <div class="alert alert-danger">
-                                    <strong>{{ error|escape }}</strong>
+                                    <strong>Error:</strong> {{ error|escape }}
                                 </div>
                             {% endfor %}
                         {% endfor %}
                         {% for error in form.non_field_errors %}
                             <div class="alert alert-danger">
-                                <strong>{{ error|escape }}</strong>
+                                <strong>Error:</strong> {{ error|escape }}
                             </div>
                         {% endfor %}
                     {% endif %}
+                    
                     <div class="form-group">
                         <label class="required" for="id_username">Username</label>
                         {{ form.username }}
                     </div>
+                    
                     <div class="form-group">
                         <label class="required" for="id_password">Password</label>
                         {{ form.password }}
                     </div>
+                    
                     <button type="submit" class="btn btn-primary btn-signin">Sign In</button>
                     </form>
 
+                    <div class="login-divider">
+                        <span>or</span>
+                    </div>
+
                     <div class="login-links">
-                        <a href="{% url 'workshop_app:register' %}">New here? Create an account</a>
-                        <a href="{% url 'password_reset' %}">Forgot your password?</a>
+                        <a href="{% url 'workshop_app:register' %}">👤 Create a new account</a>
+                        <a href="{% url 'password_reset' %}">🔑 Forgot your password?</a>
                     </div>
                 </div>
             </div>  
-        </div>
-    </div>
         </div>
     </div>
 {% endblock %}

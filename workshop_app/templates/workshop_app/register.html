@@ -1,78 +1,112 @@
 {% extends 'workshop_app/base.html' %}
 
 {% block title %}
-    Register
+    Register - FOSSEE Workshops
 {% endblock %}
 
 {% block content %}
     <style type="text/css">
-        /* Centered form on desktop, full width on mobile */
-        .register-container {
-            max-width: 600px;
+        /* Registration form layout */
+        .register-wrapper {
+            max-width: 700px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: 2rem 1rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .page-header h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--color-text-secondary);
+            font-size: 1rem;
         }
 
         .register-card {
             margin-bottom: 2rem;
         }
 
-        .page-title {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
         .help-text {
             display: block;
-            font-size: 12px;
-            color: #6c757d;
-            margin-top: 0.25rem;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-top: 0.4rem;
+            line-height: 1.4;
         }
 
         .errorlist {
-            color: #dc3545;
-            font-size: 13px;
-            margin: 0.25rem 0 0 0;
-            padding: 0;
-            list-style: none;
+            color: var(--color-danger);
+            font-size: 0.85rem;
+            margin: 0.5rem 0 0 0;
+            padding-left: 1.25rem;
         }
 
         .errorlist li {
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.3rem;
         }
 
-        .btn-submit {
+        .btn-register {
             width: 100%;
-            padding: 0.75rem;
-            margin-top: 1rem;
-            font-size: 16px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            font-size: 1.05rem;
             font-weight: 600;
+            border-radius: 6px;
         }
 
-        @media (max-width: 767px) {
-            .register-container {
-                padding: 0;
-                padding-top: 1rem;
+        .form-divider {
+            text-align: center;
+            margin: 2rem 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--color-border-light);
+        }
+
+        .form-divider p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .form-divider a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .form-divider a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 576px) {
+            .register-wrapper {
+                padding: 1rem 0;
             }
 
             .register-card {
                 border-radius: 0;
                 box-shadow: none;
-                border-top: 2px solid #e9ecef;
-                padding: 1rem;
+                border-top: 2px solid var(--color-border-main);
+            }
+
+            .register-card .card-body {
+                padding: 1.25rem;
             }
         }
     </style>
 
-    <div class="register-container">
-        <div class="page-title">
-            <h2>Coordinator Registration</h2>
-            <p class="text-muted">Please fill in the form below to create your account</p>
+    <div class="register-wrapper">
+        <div class="page-header">
+            <h2>Create Your Account</h2>
+            <p>Join us to start booking workshops</p>
         </div>
 
         <div class="card register-card">
             <div class="card-body">
-                <form method="post" class="form-wrapper">
+                <form method="post" novalidate>
                     {% csrf_token %}
                     
                     {% if form.non_field_errors %}
@@ -87,7 +121,7 @@
                     {% endif %}
 
                     {% for field in form %}
-                        <div class="form-group {% if field.errors %}errors{% endif %}">
+                        <div class="form-group {% if field.errors %}has-error{% endif %}">
                             {% if field.label %}
                                 <label for="{{ field.id_for_label }}" {% if field.field.required %}class="required"{% endif %}>
                                     {{ field.label }}
@@ -110,13 +144,13 @@
                         </div>
                     {% endfor %}
 
-                    <button type="submit" class="btn btn-primary btn-submit">
+                    <button type="submit" class="btn btn-success btn-register">
                         Create Account
                     </button>
                 </form>
 
-                <div style="text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e9ecef;">
-                    <p class="text-muted">Already have an account? <a href="{% url 'workshop_app:login' %}" style="color: #17a2b8; text-decoration: none;">Sign In</a></p>
+                <div class="form-divider">
+                    <p>Already have an account? <a href="{% url 'workshop_app:login' %}">Sign In</a></p>
                 </div>
             </div>
         </div>
