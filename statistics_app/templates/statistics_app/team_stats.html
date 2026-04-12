@@ -1,48 +1,305 @@
 {% extends 'workshop_app/base.html' %}
 
 {% block title %}
- Workshop  Statistics
+    Workshop Statistics
 {% endblock %}
 
 {% block content %}
+<style>
+    .stats-container {
+        padding: 2rem 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-2">
-            <ul class="nav nav-pills list-group">
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        margin: 0 0 0.5rem;
+    }
+
+    .page-subtitle {
+        font-size: 1.1rem;
+        color: var(--color-text-secondary);
+        margin: 0;
+    }
+
+    .stats-layout {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 2rem;
+    }
+
+    .team-sidebar {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        padding: 1.5rem;
+        height: fit-content;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    html[data-theme="dark"] .team-sidebar {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .sidebar-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0 0 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--color-primary);
+    }
+
+    .team-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .team-list li {
+        margin-bottom: 0.5rem;
+    }
+
+    .team-link {
+        display: block;
+        padding: 0.75rem 1rem;
+        color: var(--color-text-primary);
+        text-decoration: none;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        border-left: 3px solid transparent;
+        background-color: var(--color-bg-secondary);
+    }
+
+    .team-link:hover {
+        background-color: var(--color-bg-tertiary);
+        border-left-color: var(--color-primary);
+        transform: translateX(4px);
+    }
+
+    .team-link.active {
+        background-color: rgba(0, 123, 255, 0.1);
+        border-left-color: var(--color-primary);
+        color: var(--color-primary);
+        font-weight: 600;
+    }
+
+    .chart-container {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    html[data-theme="dark"] .chart-container {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .chart-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--color-border-main);
+    }
+
+    .chart-icon {
+        font-size: 1.5rem;
+        margin-right: 0.75rem;
+    }
+
+    .chart-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        margin: 0;
+    }
+
+    #myChart {
+        max-height: 400px;
+    }
+
+    @media (max-width: 768px) {
+        .stats-container {
+            padding: 1rem;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+        }
+
+        .stats-layout {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .team-sidebar {
+            padding: 1rem;
+        }
+
+        .team-list li {
+            margin-bottom: 0.4rem;
+        }
+
+        .team-link {
+            padding: 0.6rem 0.8rem;
+            font-size: 0.95rem;
+        }
+
+        .chart-container {
+            padding: 1.5rem;
+        }
+
+        #myChart {
+            max-height: 300px;
+        }
+    }
+
+    /* Dark theme override for chart background */
+    html[data-theme="dark"] canvas {
+        filter: brightness(1.1);
+    }
+</style>
+
+<div class="stats-container">
+    <div class="page-header">
+        <h1 class="page-title">📊 Workshop Statistics</h1>
+        <p class="page-subtitle">Team member workshop distribution and activity</p>
+    </div>
+
+    <div class="stats-layout">
+        <!-- Team Sidebar -->
+        <div class="team-sidebar">
+            <div class="sidebar-title">👥 Teams</div>
+            <ul class="team-list">
                 {% for team in all_teams %}
-                    <li class="nav-item">
-                        <a href="{% url 'statistics_app:team' team.id %}" class="nav-link list-group-item">
-                            Team {{forloop.counter}}
+                    <li>
+                        <a href="{% url 'statistics_app:team' team.id %}"
+                           class="team-link {% if request.resolver_match.kwargs.team_id == team.id %}active{% endif %}">
+                            <span>👥 Team {{ forloop.counter }}</span>
                         </a>
+                    </li>
+                {% empty %}
+                    <li style="padding: 0.75rem 1rem; color: var(--color-text-secondary); text-align: center;">
+                        No teams available
                     </li>
                 {% endfor %}
             </ul>
         </div>
-        <div class="col-md-8">
-            <br>
+
+        <!-- Chart Section -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <span class="chart-icon">📈</span>
+                <h2 class="chart-title">Team Members Workshops</h2>
+            </div>
             <canvas id="myChart"></canvas>
         </div>
     </div>
 </div>
-<script>
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var chart = new Chart(ctx, {
-        // The type of chart we want to create
-        type: 'bar',
 
-        // The data for our dataset
-        data: {
-            labels: {{team_labels|safe}},
-            datasets: [{
-                data: {{ws_count|safe}},
-                label: "Team Members Workshops",
-                backgroundColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgb(255, 99, 132)',
-            }]
-        },
-        // Configuration options go here
-        options: {}
-    });
+<script>
+    // Get chart context with theme awareness
+    var ctx = document.getElementById('myChart');
+    if (ctx) {
+        ctx = ctx.getContext('2d');
+
+        // Detect current theme
+        var isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
+        var textColor = isDarkTheme ? '#e0e0e0' : '#333333';
+        var gridColor = isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        var barColor = '#007bff';
+        var barHoverColor = '#0056b3';
+
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ team_labels|safe }},
+                datasets: [{
+                    data: {{ ws_count|safe }},
+                    label: "Team Members Workshops",
+                    backgroundColor: barColor,
+                    borderColor: barHoverColor,
+                    borderRadius: 6,
+                    borderWidth: 2,
+                    hoverBackgroundColor: barHoverColor,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: textColor,
+                            font: {
+                                size: 12,
+                                weight: 600
+                            },
+                            padding: 15
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: textColor,
+                            font: {
+                                size: 12
+                            }
+                        },
+                        grid: {
+                            color: gridColor
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: textColor,
+                            font: {
+                                size: 12
+                            }
+                        },
+                        grid: {
+                            color: gridColor,
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Update chart colors when theme changes
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+                    var newIsDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                    var newTextColor = newIsDark ? '#e0e0e0' : '#333333';
+                    var newGridColor = newIsDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+                    chart.options.plugins.legend.labels.color = newTextColor;
+                    chart.options.scales.y.ticks.color = newTextColor;
+                    chart.options.scales.y.grid.color = newGridColor;
+                    chart.options.scales.x.ticks.color = newTextColor;
+                    chart.options.scales.x.grid.color = newGridColor;
+
+                    chart.update();
+                }
+            });
+        });
+
+        observer.observe(document.documentElement, { attributes: true });
+    }
 </script>
 {% endblock %}
