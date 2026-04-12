@@ -142,10 +142,11 @@
 
     .checkbox-group {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         font-size: 0.95rem;
         margin: 0.75rem 0;
         gap: 12px;
+        overflow: visible;
     }
 
     .checkbox-group input[type="checkbox"] {
@@ -155,6 +156,7 @@
         padding: 0;
         flex-shrink: 0;
         cursor: pointer;
+        margin-top: 3px;
     }
 
     .checkbox-group label {
@@ -166,6 +168,8 @@
         overflow-wrap: break-word;
         line-height: 1.5;
         cursor: pointer;
+        flex: 1;
+        min-width: 0;
     }
 
     .comment-form textarea {

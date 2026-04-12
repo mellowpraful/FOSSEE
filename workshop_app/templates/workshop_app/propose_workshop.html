@@ -202,10 +202,11 @@
         /* Checkbox Group */
         .checkbox-group {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             margin: 1.5rem 0;
             width: 100%;
             gap: 12px;
+            overflow: visible;
         }
 
         .checkbox-group input[type="checkbox"] {
@@ -216,6 +217,7 @@
             cursor: pointer;
             accent-color: var(--color-primary);
             flex-shrink: 0;
+            margin-top: 3px;
         }
 
         .checkbox-group label {
@@ -226,6 +228,8 @@
             font-size: 0.95rem;
             line-height: 1.5;
             color: var(--color-text-primary);
+            flex: 1;
+            min-width: 0;
             white-space: normal;
             word-wrap: break-word;
             overflow-wrap: break-word;
