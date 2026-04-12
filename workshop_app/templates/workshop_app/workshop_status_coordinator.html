@@ -91,30 +91,65 @@
     }
 
     .badge-status {
-        display: inline-block;
-        padding: 0.4rem 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
         border-radius: 20px;
-        font-size: 0.85rem;
+        font-size: 11px;
         font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        min-height: 32px;
+        min-width: 48px;
         margin-top: 0.75rem;
     }
 
-    .badge-accepted {
-        background-color: rgba(40, 167, 69, 0.2);
-        color: #28a745;
-        border: 1px solid #28a745;
+    .badge-accepted,
+    .badge-assigned {
+        background-color: rgba(76, 175, 80, 0.15);
+        color: #4caf50;
+        border: 1px solid rgba(76, 175, 80, 0.3);
     }
 
     .badge-pending {
-        background-color: rgba(255, 193, 7, 0.2);
-        color: #ffc107;
-        border: 1px solid #ffc107;
+        background-color: rgba(255, 193, 7, 0.15);
+        color: #ff9800;
+        border: 1px solid rgba(255, 193, 7, 0.3);
     }
 
     .badge-rejected {
-        background-color: rgba(220, 53, 69, 0.2);
-        color: #dc3545;
-        border: 1px solid #dc3545;
+        background-color: rgba(244, 67, 54, 0.15);
+        color: #f44336;
+        border: 1px solid rgba(244, 67, 54, 0.3);
+    }
+
+    .badge-status::before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    .badge-accepted::before,
+    .badge-assigned::before {
+        background-color: #4caf50;
+    }
+
+    .badge-pending::before {
+        background-color: #ff9800;
+        animation: pulse 1.5s infinite;
+    }
+
+    .badge-rejected::before {
+        background-color: #f44336;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
     }
 
     /* Proposed workshops - Table layout */
@@ -160,6 +195,77 @@
     .workshop-link:hover {
         text-decoration: underline;
         color: var(--color-primary);
+    }
+
+    /* Card Action Buttons */
+    .card-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .card-actions button,
+    .card-actions a {
+        flex: 1;
+        min-width: 100px;
+        min-height: 44px;
+        padding: 10px 12px;
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary-action {
+        background: linear-gradient(135deg, var(--color-primary), var(--color-info));
+        color: white;
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-primary-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 123, 255, 0.4);
+    }
+
+    .btn-secondary-action {
+        background-color: var(--color-bg-secondary);
+        color: var(--color-text-primary);
+        border: 1px solid var(--color-border-main);
+    }
+
+    .btn-secondary-action:hover {
+        background-color: var(--color-bg-tertiary);
+    }
+
+    .btn-danger-action {
+        background-color: rgba(244, 67, 54, 0.1);
+        color: #f44336;
+        border: 1px solid rgba(244, 67, 54, 0.3);
+    }
+
+    .btn-danger-action:hover {
+        background-color: rgba(244, 67, 54, 0.2);
+    }
+
+    @media (max-width: 768px) {
+        .card-actions {
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .card-actions button,
+        .card-actions a {
+            width: 100%;
+            min-width: unset;
+        }
     }
 
     @media (max-width: 768px) {
