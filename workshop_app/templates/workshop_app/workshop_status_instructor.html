@@ -323,8 +323,8 @@
 
             {% with proposals=workshops %}
             {% if proposals %}
-                {% for proposal in proposals %}
-                    {% if not proposal.status and proposal.tnc_accepted %}
+                {% for workshop in proposals %}
+                    {% if not workshop.status and workshop.tnc_accepted %}
                         {% if forloop.first %}
                             <div class="workshops-table-container">
                                 <table class="table table-hover">
@@ -342,20 +342,20 @@
                         {% endif %}
                         <tr>
                             <td>
-                                <a href="{% url 'workshop_app:view_profile' proposal.coordinator.id %}" class="workshop-link">
-                                    {{ proposal.coordinator.get_full_name }}
+                                <a href="{% url 'workshop_app:view_profile' workshop.coordinator.id %}" class="workshop-link">
+                                    {{ workshop.coordinator.get_full_name }}
                                 </a>
                             </td>
-                            <td>{{ proposal.coordinator.profile.institute|capfirst }}</td>
-                            <td>{{ proposal.workshop_type|capfirst }}</td>
-                            <td>{{ proposal.date|date:"d M, Y" }}</td>
+                            <td>{{ workshop.coordinator.profile.institute|capfirst }}</td>
+                            <td>{{ workshop.workshop_type|capfirst }}</td>
+                            <td>{{ workshop.date|date:"d M, Y" }}</td>
                             <td>
-                                <span class="badge-status badge-pending">{{ proposal.get_status }}</span>
+                                <span class="badge-status badge-pending">{{ workshop.get_status }}</span>
                             </td>
                             <td>
                                 <button class="btn-accept" 
                                         onclick="return confirm('Once accepted you cannot reject. Please personally contact the Coordinator if cancellation is needed. Accept this workshop?')">
-                                    <a href="{% url 'workshop_app:accept_workshop' proposal.id %}" style="color: white; text-decoration: none;">
+                                    <a href="{% url 'workshop_app:accept_workshop' workshop.id %}" style="color: white; text-decoration: none;">
                                         ✓ Accept
                                     </a>
                                 </button>

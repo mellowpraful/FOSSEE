@@ -277,16 +277,16 @@
             {% endif %}
 
             <!-- Proposed Workshops Section -->
+            <!-- Proposed Workshops Section -->
             <div class="section-header" style="margin-top: 3rem;">
                 <span class="section-icon">⏳</span>
                 <h3>Workshops Proposed By Me</h3>
             </div>
 
-            {% regroup workshops by status as grouped_workshops %}
             {% with proposals=workshops %}
             {% if proposals %}
-                {% for proposal in proposals %}
-                    {% if not proposal.status and proposal.tnc_accepted %}
+                {% for workshop in proposals %}
+                    {% if not workshop.status and workshop.tnc_accepted %}
                         {% if forloop.first %}
                             <div class="workshops-table-container">
                                 <table class="table table-hover">
@@ -301,13 +301,13 @@
                                     <tbody>
                         {% endif %}
                         <tr>
-                            <td><a href="{% url 'workshop_app:workshop_details' proposal.id %}" class="workshop-link">{{ proposal.workshop_type|capfirst }}</a></td>
-                            <td>{{ proposal.date|date:"d M, Y" }}</td>
+                            <td><a href="{% url 'workshop_app:workshop_details' workshop.id %}" class="workshop-link">{{ workshop.workshop_type|capfirst }}</a></td>
+                            <td>{{ workshop.date|date:"d M, Y" }}</td>
                             <td>
-                                <span class="badge-status badge-pending">{{ proposal.get_status }}</span>
+                                <span class="badge-status badge-pending">{{ workshop.get_status }}</span>
                             </td>
                             <td>
-                                <a href="{% url 'workshop_app:workshop_details' proposal.id %}" class="workshop-link" style="font-size: 0.9rem;">View →</a>
+                                <a href="{% url 'workshop_app:workshop_details' workshop.id %}" class="workshop-link" style="font-size: 0.9rem;">View →</a>
                             </td>
                         </tr>
                         {% if forloop.last %}
