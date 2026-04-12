@@ -324,13 +324,13 @@
                 </p>
             </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h3>📝 Workshop Details</h3>
-                </div>
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
+        <div class="card">
+            <div class="card-header">
+                <h3 style="margin: 0;">Propose Workshop</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
                     
                     {% if form.errors %}
                         <div class="error-box">
