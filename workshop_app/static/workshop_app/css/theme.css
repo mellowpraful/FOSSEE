@@ -29,8 +29,8 @@
     --color-input-border: #ced4da;
     --color-input-text: #212529;
     
-    --color-footer-bg: #343a40;
-    --color-footer-text: #ffffff;
+    --color-footer-bg: #f8f9fa;
+    --color-footer-text: #212529;
 }
 
 html[data-theme="dark"],
@@ -274,4 +274,104 @@ html[data-theme="dark"] .page-link:hover {
 html[data-theme="dark"] .pagination .page-item.active .page-link {
     background-color: var(--color-primary);
     border-color: var(--color-primary);
+}
+
+/* Bootstrap Jumbotron - Dark theme */
+html[data-theme="dark"] .jumbotron {
+    background-color: var(--color-card-bg) !important;
+    color: var(--color-text-primary) !important;
+    border: 1px solid var(--color-border-main) !important;
+}
+
+html[data-theme="dark"] .jumbotron h1 {
+    color: var(--color-text-primary) !important;
+}
+
+html[data-theme="dark"] .jumbotron p {
+    color: var(--color-text-secondary) !important;
+}
+
+/* Force all inline background overrides in dark mode */
+html[data-theme="dark"] [style*="background-color: #fafbfc"],
+html[data-theme="dark"] [style*="background-color: white"],
+html[data-theme="dark"] [style*="background: white"],
+html[data-theme="dark"] [style*="background: #f"],
+html[data-theme="dark"] div[style*="background"] {
+    background-color: var(--color-card-bg) !important;
+}
+
+/* Force all inline text color overrides */
+html[data-theme="dark"] [style*="color: #495057"],
+html[data-theme="dark"] [style*="color: #2c3e50"],
+html[data-theme="dark"] [style*="color: #34495e"],
+html[data-theme="dark"] [style*="color: #555"],
+html[data-theme="dark"] [style*="color: #666"],
+html[data-theme="dark"] [style*="color: #777"],
+html[data-theme="dark"] h3[style*="color"] {
+    color: var(--color-text-primary) !important;
+}
+
+/* Table styling for statistics */
+html[data-theme="dark"] .table {
+    background-color: var(--color-card-bg) !important;
+    color: var(--color-text-primary) !important;
+}
+
+html[data-theme="dark"] .table thead th {
+    background-color: var(--color-bg-tertiary) !important;
+    color: var(--color-text-primary) !important;
+    border-color: var(--color-border-main) !important;
+}
+
+html[data-theme="dark"] .table tbody {
+    background-color: var(--color-card-bg) !important;
+}
+
+html[data-theme="dark"] .table tbody tr {
+    background-color: var(--color-card-bg) !important;
+    color: var(--color-text-primary) !important;
+}
+
+html[data-theme="dark"] .table tbody tr:hover {
+    background-color: var(--color-bg-secondary) !important;
+}
+
+html[data-theme="dark"] .table tbody td {
+    color: var(--color-text-primary) !important;
+    border-color: var(--color-border-light) !important;
+}
+
+/* Badge styling */
+html[data-theme="dark"] .badge {
+    background-color: var(--color-bg-tertiary) !important;
+    color: var(--color-text-primary) !important;
+}
+
+html[data-theme="dark"] .badge-success {
+    background-color: var(--color-success) !important;
+    color: white !important;
+}
+
+html[data-theme="dark"] .badge-info {
+    background-color: var(--color-info) !important;
+    color: white !important;
+}
+
+/* Stats container */
+html[data-theme="dark"] .stats-container {
+    background-color: var(--color-bg-primary) !important;
+    color: var(--color-text-primary) !important;
+}
+
+/* Filters card */
+html[data-theme="dark"] .filters-card {
+    background-color: var(--color-card-bg) !important;
+    border-color: var(--color-border-main) !important;
+}
+
+/* Content card */
+html[data-theme="dark"] .content-card {
+    background-color: var(--color-card-bg) !important;
+    border-color: var(--color-border-main) !important;
+    color: var(--color-text-primary) !important;
 }
