@@ -4,190 +4,445 @@
 
 {% block content %}
 <style>
-    /* smooth hover effects for interactive elements */
-    .filter-buttons button:hover,
-    .filter-buttons a:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    .stats-page-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, var(--color-primary), var(--color-info));
+        color: white;
+        padding: 2.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    html[data-theme="dark"] .page-header {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .page-header h2 {
+        margin: 0 0 0.5rem;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .page-header-subtitle {
+        opacity: 0.95;
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .stats-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 2rem;
+    }
+
+    .filters-card {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        height: fit-content;
+    }
+
+    html[data-theme="dark"] .filters-card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .card-header {
+        padding: 1.5rem;
+        border-bottom: 2px solid var(--color-border-main);
+        background: var(--color-bg-secondary);
+    }
+
+    .card-header h3 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .filter-group {
+        margin-bottom: 1.25rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--color-border-main);
+    }
+
+    .filter-group:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .filter-group label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .filter-group select,
+    .filter-group input[type="date"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--color-border-main);
+        border-radius: 6px;
+        background-color: var(--color-bg-primary);
+        color: var(--color-text-primary);
+        font-size: 0.9rem;
         transition: all 0.2s ease;
     }
-    
-    .chart-buttons button:hover {
-        opacity: 0.95;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 5px rgba(23, 162, 184, 0.3);
+
+    .filter-group select:focus,
+    .filter-group input[type="date"]:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
     }
-    
-    .table tbody tr:hover {
-        background-color: #f9f9f9;
+
+    .filter-buttons {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 2px solid var(--color-border-main);
     }
-    
-    /* Dark theme hover state override */
-    html[data-theme="dark"] .table tbody tr:hover {
-        background-color: #2d2d2d !important;
+
+    .filter-btn {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
     }
-    
-    /* Dark theme overrides for statistics page - CRITICAL */
+
+    .btn-submit-filter {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-submit-filter:hover {
+        background-color: #218838;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+    }
+
+    .btn-download {
+        background-color: var(--color-primary);
+        color: white;
+    }
+
+    .btn-download:hover {
+        background-color: var(--color-info);
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-clear {
+        background-color: var(--color-bg-tertiary);
+        color: var(--color-text-primary);
+        border: 1px solid var(--color-border-main);
+    }
+
+    .btn-clear:hover {
+        background-color: var(--color-border-main);
+    }
+
+    .content-card {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
     html[data-theme="dark"] .content-card {
-        background-color: #242424 !important;
-        color: #e8e8e8 !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
     }
-    
-    html[data-theme="dark"] .filters-card {
-        background-color: #242424 !important;
-        color: #e8e8e8 !important;
+
+    .stats-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--color-border-main);
+        flex-wrap: wrap;
+        gap: 1rem;
     }
-    
-    /* Dark theme table styling */
-    html[data-theme="dark"] .table {
-        color: #e8e8e8 !important;
-        background-color: #242424 !important;
+
+    .chart-buttons {
+        display: flex;
+        gap: 0.75rem;
     }
-    
-    html[data-theme="dark"] .table thead tr {
-        background-color: #1a1a1a !important;
-        color: #e8e8e8 !important;
+
+    .chart-btn {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        border-radius: 6px;
+        background-color: var(--color-primary);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease;
     }
-    
-    html[data-theme="dark"] .table thead th {
-        background-color: #1a1a1a !important;
-        color: #e8e8e8 !important;
-        border-color: #444444 !important;
+
+    .chart-btn:hover {
+        background-color: var(--color-info);
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
     }
-    
-    html[data-theme="dark"] .table tbody tr {
-        background-color: #2a2a2a !important;
-        color: #e8e8e8 !important;
-        border-color: #444444 !important;
+
+    .table-section {
+        margin-bottom: 1rem;
+        overflow-x: auto;
     }
-    
-    html[data-theme="dark"] .table tbody td {
-        color: #e8e8e8 !important;
-        border-color: #444444 !important;
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 0;
+    }
+
+    .table thead {
+        background: var(--color-bg-secondary);
+    }
+
+    .table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid var(--color-border-main);
+    }
+
+    .table tbody tr {
+        border-bottom: 1px solid var(--color-border-main);
+        transition: background-color 0.2s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: var(--color-bg-tertiary);
+    }
+
+    .table td {
+        padding: 1rem;
+        color: var(--color-text-secondary);
+        font-size: 0.95rem;
+    }
+
+    .workshop-name {
+        color: var(--color-primary);
+        font-weight: 600;
+    }
+
+    .date-value {
+        color: var(--color-text-secondary);
+    }
+
+    .paginator-section {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    /* Dark theme overrides - CRITICAL */
+    html[data-theme="dark"] .table tbody tr:hover {
+        background-color: var(--color-bg-tertiary) !important;
+    }
+
+    js-content-card {
+        background-color: var(--color-card-bg) !important;
+        color: var(--color-text-primary) !important;
+    }
+
+    @media (max-width: 1024px) {
+        .stats-layout {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .filters-card {
+            height: auto;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .stats-page-container {
+            margin: 1rem auto;
+            padding: 0;
+        }
+
+        .page-header {
+            padding: 1.5rem;
+            border-radius: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-header h2 {
+            font-size: 1.6rem;
+        }
+
+        .stats-controls {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .chart-buttons {
+            width: 100%;
+        }
+
+        .chart-btn {
+            flex: 1;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.85rem;
+        }
     }
 </style>
+<div class="stats-page-container">
+    <div class="page-header">
+        <div class="page-header-subtitle">📊 Data Insights</div>
+        <h2>Workshop Statistics</h2>
+    </div>
 
-<div class="container-fluid stats-container">
-    <div class="row">
-        <div class="col-md-3">
+    <div class="stats-layout">
+        <!-- Filters Sidebar -->
+        <div class="filters-card">
             <form method="GET">
-                <div class="filters-card" style="border: 1px solid #d5d5d5 !important; background-color: #fafbfc !important; border-radius: 3px !important; box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;">
-                    <div class="card-header" style="padding: 13px 15px !important; border-bottom: 1px solid #e0e0e0 !important; background: linear-gradient(to bottom, #f8f8f8, #f3f3f3) !important;">
-                        <h3 style="margin: 0 !important; font-size: 15px !important; font-weight: 600 !important; color: #2c3e50 !important; letter-spacing: 0.5px !important;">📊 Filters</h3>
+                <div class="card-header">
+                    <h3>🔍 Filters</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Date Range Section -->
+                    <div class="filter-group">
+                        <label>📅 From Date</label>
+                        {{form.from_date}}
                     </div>
-                    <div class="card-body" style="padding: 15px !important;">
-                        <!-- Date range section -->
-                        <div style="margin-bottom: 14px !important; padding-bottom: 12px !important; border-bottom: 1px solid #e9ecef !important;">
-                            <div class="filter-group" style="margin-bottom: 10px !important;">
-                                <label style="font-size: 13px !important; font-weight: 500 !important; color: #495057 !important;">📅 From date</label>
-                                {{form.from_date}}
-                            </div>
-                            <div class="filter-group">
-                                <label style="font-size: 13px !important; font-weight: 500 !important; color: #495057 !important;">📅 To date</label>
-                                {{form.to_date}}
-                            </div>
-                        </div>
-                        
-                        <!-- Workshop and state section -->
-                        <div style="margin-bottom: 14px !important; padding-bottom: 12px !important; border-bottom: 1px solid #e9ecef !important;">
-                            <div class="filter-group" style="margin-bottom: 10px !important;">
-                                <label style="font-size: 13px !important; font-weight: 500 !important; color: #495057 !important;">📚 Workshop Type</label>
-                                {{form.workshop_type}}
-                            </div>
-                            <div class="filter-group">
-                                <label style="font-size: 13px !important; font-weight: 500 !important; color: #495057 !important;">🌍 State</label>
-                                {{form.state}}
-                            </div>
-                        </div>
-                        
-                        <!-- Sort and view options -->
-                        <div style="margin-bottom: 14px !important;">
-                            <div class="filter-group" style="margin-bottom: 10px !important;">
-                                <label style="font-size: 13px !important; font-weight: 500 !important; color: #495057 !important;">⚙️ {{form.sort.help_text}}</label>
-                                {{form.sort}}
-                            </div>
-                            {% if request.user.is_authenticated %}
-                            <div class="filter-group">
+                    <div class="filter-group">
+                        <label>📅 To Date</label>
+                        {{form.to_date}}
+                    </div>
+
+                    <!-- Workshop and State Section -->
+                    <div class="filter-group">
+                        <label>📚 Workshop Type</label>
+                        {{form.workshop_type}}
+                    </div>
+                    <div class="filter-group">
+                        <label>🌍 State</label>
+                        {{form.state}}
+                    </div>
+
+                    <!-- Sort and View Options -->
+                    <div class="filter-group">
+                        <label>⚙️ {{form.sort.help_text}}</label>
+                        {{form.sort}}
+                    </div>
+                    {% if request.user.is_authenticated %}
+                        <div class="filter-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
                                 {{form.show_workshops}}
-                                <label style="display: inline !important; font-size: 13px !important; margin-left: 6px !important; color: #495057 !important;">{{form.show_workshops.help_text}}</label>
-                            </div>
-                            {% endif %}
+                                <span>{{form.show_workshops.help_text}}</span>
+                            </label>
                         </div>
-                        
-                        <!-- Action buttons -->
-                        <div class="filter-buttons" style="display: flex !important; gap: 8px !important; margin-top: 14px !important; padding-top: 12px !important; border-top: 1px solid #e9ecef !important;">
-                            <button type="submit" class="btn btn-success btn-submit-filter" style="flex: 1 !important; padding: 10px 12px !important; font-size: 13px !important; border-radius: 4px !important; border: none !important; background-color: #27ae60 !important; color: white !important; font-weight: 500 !important; cursor: pointer !important;">
-                                <i class="fa fa-search"></i>&nbsp;View
-                            </button>
-                            <button type="submit" class="btn btn-info" name="download" value="download" style="flex: 1 !important; padding: 10px 12px !important; font-size: 13px !important; border-radius: 4px !important; border: none !important; background-color: #3498db !important; color: white !important; font-weight: 500 !important; cursor: pointer !important;">
-                                <i class="fa fa-download"></i>&nbsp;Download
-                            </button>
-                            <a href="{% url 'statistics_app:public' %}" class="btn btn-clear" style="flex: 1 !important; padding: 10px 12px !important; font-size: 13px !important; border-radius: 4px !important; background-color: #ecf0f1 !important; color: #34495e !important; border: 1px solid #bdc3c7 !important; text-decoration: none !important; display: flex !important; align-items: center !important; justify-content: center !important; font-weight: 500 !important; cursor: pointer !important;">
-                                <i class="fa fa-refresh"></i>&nbsp;Clear
-                            </a>
-                        </div>
+                    {% endif %}
+
+                    <!-- Action Buttons -->
+                    <div class="filter-buttons">
+                        <button type="submit" class="filter-btn btn-submit-filter">
+                            🔍 View
+                        </button>
+                        <button type="submit" name="download" value="download" class="filter-btn btn-download">
+                            ⬇️ Download
+                        </button>
+                        <a href="{% url 'statistics_app:public' %}" class="filter-btn btn-clear">
+                            🔄 Clear
+                        </a>
                     </div>
                 </div>
             </form>
         </div>
-        <div class="col">
-            <!-- Main content card -->
-            <div class="content-card" style="border: 1px solid #d5d9df !important; border-radius: 4px !important; background-color: white !important; padding: 16px !important; box-shadow: 0 1px 4px rgba(0,0,0,0.08) !important;">
-                <!-- Top controls: pagination and charts -->
-                <div class="stats-controls" style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 14px !important; padding-bottom: 12px !important; border-bottom: 1px solid #e8eef5 !important;">
-                    <div class="paginator-section">
-                        {% include "statistics_app/paginator.html" %}
-                    </div>
-                    <div class="chart-buttons" style="display: flex !important; gap: 8px !important;">
-                        <button class="btn btn-info" id="state_graph" style="padding: 8px 13px !important; font-size: 12px !important; white-space: nowrap !important; border-radius: 4px !important; background-color: #16a085 !important; color: white !important; border: none !important; cursor: pointer !important; font-weight: 500 !important;">
-                            <i class="fa fa-bar-chart"></i>&nbsp;State Chart
-                        </button>
-                        <button class="btn btn-info" id="type_graph" style="padding: 8px 13px !important; font-size: 12px !important; white-space: nowrap !important; border-radius: 4px !important; background-color: #2980b9 !important; color: white !important; border: none !important; cursor: pointer !important; font-weight: 500 !important;">
-                            <i class="fa fa-bar-chart"></i>&nbsp;Workshop Chart
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Table section -->
-                <div class="table-section" style="margin-bottom: 0 !important; overflow-x: auto !important;">
-                    <table class="table table-responsive-sm" style="margin-bottom: 0 !important; border-collapse: collapse !important; width: 100% !important;">
-                        <thead>
-                            <tr style="background-color: #3d4f5c !important; color: white !important;">
-                                <th style="background-color: #3d4f5c !important; font-weight: 600 !important; border: none !important; color: white !important; padding: 12px 10px !important; font-size: 12px !important; text-align: left !important;">Sr No.</th>
-                                <th style="background-color: #3d4f5c !important; font-weight: 600 !important; border: none !important; color: white !important; padding: 12px 10px !important; font-size: 12px !important; text-align: left !important;">Coordinator</th>
-                                <th style="background-color: #3d4f5c !important; font-weight: 600 !important; border: none !important; color: white !important; padding: 12px 10px !important; font-size: 12px !important; text-align: left !important;">Institute</th>
-                                <th style="background-color: #3d4f5c !important; font-weight: 600 !important; border: none !important; color: white !important; padding: 12px 10px !important; font-size: 12px !important; text-align: left !important;">Instructor</th>
-                                <th style="background-color: #3d4f5c !important; font-weight: 600 !important; border: none !important; color: white !important; padding: 12px 10px !important; font-size: 12px !important; text-align: left !important;">Workshop</th>
-                                <th style="background-color: #3d4f5c !important; font-weight: 600 !important; border: none !important; color: white !important; padding: 12px 10px !important; font-size: 12px !important; text-align: left !important;">Date</th>
-                            </tr>
-                        </thead>
-                        {% csrf_token %}
-                        {% for workshop in objects %}
-                            <tbody>
-                                <tr style="border-bottom: 1px solid #e8eef5 !important;">
-                                    <td style="padding: 12px 10px !important; font-size: 12px !important; color: #2c3e50 !important;">{{ forloop.counter0|add:objects.start_index}}</td>
-                                    <td style="padding: 12px 10px !important; font-size: 12px !important; color: #34495e !important;">{{ workshop.coordinator.get_full_name | capfirst }}</td>
-                                    <td style="padding: 12px 10px !important; font-size: 12px !important; color: #555 !important;">{{ workshop.coordinator.profile.institute | capfirst }}</td>
-                                    <td style="padding: 12px 10px !important; font-size: 12px !important; color: #34495e !important;">{{ workshop.instructor.get_full_name | capfirst }}</td>
-                                    <td style="padding: 12px 10px !important; font-size: 12px !important; color: #16a085 !important; font-weight: 500 !important;">{{ workshop.workshop_type.name }}</td>
-                                    <td style="padding: 12px 10px !important; font-size: 12px !important; color: #7f8c8d !important;">{{ workshop.date | date}}</td>
-                                </tr>
-                            </tbody>
-                        {% endfor %}
-                    </table>
-                </div>
-                
-                <!-- Bottom pagination -->
-                <div class="paginator-section bottom-paginator" style="margin-top: 12px !important; padding-top: 11px !important; border-top: 1px solid #e8eef5 !important;">
+
+        <!-- Main Content -->
+        <div class="content-card">
+            <!-- Top Controls: Pagination and Charts -->
+            <div class="stats-controls">
+                <div class="paginator-section">
                     {% include "statistics_app/paginator.html" %}
                 </div>
+                <div class="chart-buttons">
+                    <button class="chart-btn" id="state_graph" title="View statistics by state">
+                        📊 State Chart
+                    </button>
+                    <button class="chart-btn" id="type_graph" title="View statistics by workshop type">
+                        📈 Type Chart
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="table-section">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Coordinator</th>
+                            <th>Institute</th>
+                            <th>Instructor</th>
+                            <th>Workshop Type</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for workshop in objects %}
+                            <tr>
+                                <td>{{ forloop.counter0|add:objects.start_index }}</td>
+                                <td>{{ workshop.coordinator.get_full_name | capfirst }}</td>
+                                <td>{{ workshop.coordinator.profile.institute | capfirst }}</td>
+                                <td>{{ workshop.instructor.get_full_name | capfirst }}</td>
+                                <td><span class="workshop-name">{{ workshop.workshop_type.name }}</span></td>
+                                <td><span class="date-value">{{ workshop.date | date }}</span></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bottom Pagination -->
+            <div class="paginator-section" style="margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--color-border-main);">
+                {% include "statistics_app/paginator.html" %}
             </div>
         </div>
     </div>
 </div>
 
 <!-- The Modal -->
-<div id="dialog" title="Workshops Statistics" style="border-radius: 4px !important;">
+<div id="dialog" title="Workshop Statistics" style="border-radius: 8px;">
     <canvas id="myChart"></canvas>
 </div>
 
@@ -195,27 +450,20 @@
     // Dark theme handler for statistics page
     function applyDarkThemeToStats() {
         const isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
+        const contentCard = document.querySelector('.content-card');
+        const filtersCard = document.querySelector('.filters-card');
         
-        if (isDarkTheme) {
-            // Apply dark theme styles to content-card
-            const contentCard = document.querySelector('.content-card');
-            if (contentCard) {
-                contentCard.style.backgroundColor = '#242424';
-                contentCard.style.color = '#e8e8e8';
+        if (contentCard) {
+            if (isDarkTheme) {
+                contentCard.style.backgroundColor = 'var(--color-card-bg, #242424)';
+                contentCard.style.color = 'var(--color-text-primary, #e8e8e8)';
             }
-            
-            // Apply dark theme styles to filters-card
-            const filtersCard = document.querySelector('.filters-card');
-            if (filtersCard) {
-                filtersCard.style.backgroundColor = '#242424';
-                filtersCard.style.color = '#e8e8e8';
-            }
-            
-            // Apply dark theme to stats-container
-            const statsContainer = document.querySelector('.stats-container');
-            if (statsContainer) {
-                statsContainer.style.backgroundColor = '#1a1a1a';
-                statsContainer.style.color = '#e8e8e8';
+        }
+        
+        if (filtersCard) {
+            if (isDarkTheme) {
+                filtersCard.style.backgroundColor = 'var(--color-card-bg, #242424)';
+                filtersCard.style.color = 'var(--color-text-primary, #e8e8e8)';
             }
         }
     }
@@ -224,14 +472,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         applyDarkThemeToStats();
     });
-    
-    // Apply theme when it changes
-    const themeToggleBtn = document.getElementById('theme-toggle-btn');
-    if (themeToggleBtn) {
-        themeToggleBtn.addEventListener('click', function() {
-            setTimeout(applyDarkThemeToStats, 100);
-        });
-    }
     
     // Watch for attribute changes on html element
     const observer = new MutationObserver(function(mutations) {
@@ -248,42 +488,75 @@
     var type_labels = {{ws_type|safe}};
     var type_data = {{ws_type_count|safe}};
     var chart;
+
     $("#state_graph").on("click", function() {
         show_graph(state_labels, state_data, "State wise Workshops");
     });
+    
     $("#type_graph").on("click", function() {
         show_graph(type_labels, type_data, "Type wise Workshops");
     });
 
-    function show_graph(labels, data, graph_name, chart_name) {
+    function show_graph(labels, data, graph_name) {
         var ctx = document.getElementById('myChart').getContext('2d');
+        
+        // Detect current theme
+        var isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
+        var textColor = isDarkTheme ? '#e0e0e0' : '#333333';
+        var gridColor = isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        
         if(chart) chart.destroy();
         chart = new Chart(ctx, {
-            // The type of chart we want to create
             type: 'bar',
-
-            // The data for our dataset
             data: {
                 labels: labels,
                 datasets: [{
                     data: data,
                     label: graph_name,
-                    backgroundColor: 'rgba(22, 160, 133, 0.8)',
-                    borderColor: 'rgba(22, 160, 133, 1)',
-                    borderWidth: 1
+                    backgroundColor: 'rgba(0, 123, 255, 0.7)',
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    borderRadius: 6,
+                    borderWidth: 2,
+                    hoverBackgroundColor: 'rgba(0, 123, 255, 0.9)'
                 }]
             },
-            // Configuration options
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: textColor,
+                            font: {
+                                size: 12,
+                                weight: 600
+                            }
+                        }
+                    }
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            color: textColor
+                        },
+                        grid: {
+                            color: gridColor
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: textColor
+                        },
+                        grid: {
+                            color: gridColor,
+                            display: false
+                        }
                     }
                 }
             }
         });
+        
         $("#dialog").dialog({
             width: 900,
             height: 500,
@@ -296,5 +569,3 @@
         });
     }
 </script>
-
-{% endblock %}
