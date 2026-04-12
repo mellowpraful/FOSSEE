@@ -37,7 +37,7 @@
 
     .stats-layout {
         display: grid;
-        grid-template-columns: 320px 1fr;
+        grid-template-columns: 340px 1fr;
         gap: 2rem;
     }
 
@@ -109,12 +109,11 @@
     }
 
     .filter-group select {
-        padding-right: 1.5rem;
+        padding: 0.75rem 2.25rem 0.75rem 0.5rem;
         background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
         background-repeat: no-repeat;
         background-position: right 0.5rem center;
         background-size: 1rem;
-        padding-right: 2rem;
     }
 
     .filter-group select:focus,
@@ -469,10 +468,7 @@
                 </table>
             </div>
 
-            <!-- Bottom Pagination -->
-            <div class="paginator-section" style="margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--color-border-main);">
-                {% include "statistics_app/paginator.html" %}
-            </div>
+
         </div>
     </div>
 </div>
