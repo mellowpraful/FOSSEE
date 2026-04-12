@@ -1,7 +1,6 @@
 /* Theme system - light and dark mode support */
 
-:root,
-[data-theme="light"] {
+:root {
     --color-bg-primary: #ffffff;
     --color-bg-secondary: #f8f9fa;
     --color-bg-tertiary: #e9ecef;
@@ -34,37 +33,38 @@
     --color-footer-text: #ffffff;
 }
 
-[data-theme="dark"] {
-    --color-bg-primary: #1a1a1a;
-    --color-bg-secondary: #242424;
-    --color-bg-tertiary: #2d2d2d;
+html[data-theme="dark"],
+html[data-theme="dark"] * {
+    --color-bg-primary: #1a1a1a !important;
+    --color-bg-secondary: #242424 !important;
+    --color-bg-tertiary: #2d2d2d !important;
     
-    --color-text-primary: #e8e8e8;
-    --color-text-secondary: #b0b0b0;
-    --color-text-muted: #808080;
+    --color-text-primary: #e8e8e8 !important;
+    --color-text-secondary: #b0b0b0 !important;
+    --color-text-muted: #808080 !important;
     
-    --color-border-light: #303030;
-    --color-border-main: #3d3d3d;
+    --color-border-light: #303030 !important;
+    --color-border-main: #3d3d3d !important;
     
-    --color-nav-bg: #0f0f0f;
-    --color-nav-text: #e8e8e8;
+    --color-nav-bg: #0f0f0f !important;
+    --color-nav-text: #e8e8e8 !important;
     
-    --color-card-bg: #242424;
-    --color-card-border: #3d3d3d;
-    --color-card-shadow: rgba(0, 0, 0, 0.3);
+    --color-card-bg: #242424 !important;
+    --color-card-border: #3d3d3d !important;
+    --color-card-shadow: rgba(0, 0, 0, 0.3) !important;
     
-    --color-primary: #0056b3;
-    --color-success: #1e7e34;
-    --color-info: #0c5460;
-    --color-warning: #856404;
-    --color-danger: #721c24;
+    --color-primary: #0056b3 !important;
+    --color-success: #1e7e34 !important;
+    --color-info: #0c5460 !important;
+    --color-warning: #856404 !important;
+    --color-danger: #721c24 !important;
     
-    --color-input-bg: #2d2d2d;
-    --color-input-border: #505050;
-    --color-input-text: #e8e8e8;
+    --color-input-bg: #2d2d2d !important;
+    --color-input-border: #505050 !important;
+    --color-input-text: #e8e8e8 !important;
     
-    --color-footer-bg: #0f0f0f;
-    --color-footer-text: #e8e8e8;
+    --color-footer-bg: #0f0f0f !important;
+    --color-footer-text: #e8e8e8 !important;
 }
 
 /* Apply theme to elements */
@@ -212,4 +212,66 @@ footer {
 #theme-toggle-btn:hover {
     background-color: rgba(255, 255, 255, 0.1);
     transform: scale(1.05);
+}
+
+/* Bootstrap overrides for dark theme */
+html[data-theme="dark"] .bg-light {
+    background-color: var(--color-bg-secondary) !important;
+    color: var(--color-text-primary) !important;
+}
+
+html[data-theme="dark"] .text-muted {
+    color: var(--color-text-secondary) !important;
+}
+
+html[data-theme="dark"] .text-secondary {
+    color: var(--color-text-secondary) !important;
+}
+
+html[data-theme="dark"] .list-group-item {
+    background-color: var(--color-card-bg) !important;
+    border-color: var(--color-border-main) !important;
+    color: var(--color-text-primary) !important;
+}
+
+html[data-theme="dark"] .list-group-item.active {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+}
+
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select {
+    background-color: var(--color-input-bg) !important;
+    border-color: var(--color-input-border) !important;
+    color: var(--color-input-text) !important;
+}
+
+html[data-theme="dark"] .form-control:focus,
+html[data-theme="dark"] .form-select:focus {
+    background-color: var(--color-input-bg) !important;
+    border-color: var(--color-primary) !important;
+    color: var(--color-input-text) !important;
+}
+
+html[data-theme="dark"] .alert {
+    background-color: var(--color-bg-secondary) !important;
+    color: var(--color-text-primary) !important;
+    border-color: var(--color-border-main) !important;
+}
+
+html[data-theme="dark"] .page-link {
+    background-color: var(--color-card-bg);
+    border-color: var(--color-border-main);
+    color: var(--color-primary);
+}
+
+html[data-theme="dark"] .page-link:hover {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-border-main);
+    color: var(--color-text-primary);
+}
+
+html[data-theme="dark"] .pagination .page-item.active .page-link {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
 }
