@@ -1,284 +1,475 @@
 {% extends 'workshop_app/base.html' %}
 
 {% block title %}
-    View Workshop details
+    Workshop Details
 {% endblock %}
 
 {% block content %}
-    <style type="text/css">
-        /* Workshop details layout */
+<style>
+    .workshop-details-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .workshop-header {
+        background: linear-gradient(135deg, var(--color-primary), var(--color-info));
+        color: white;
+        padding: 2.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    html[data-theme="dark"] .workshop-header {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .workshop-header h2 {
+        margin: 0 0 0.5rem;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .workshop-header-subtitle {
+        opacity: 0.95;
+        margin: 0;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .detail-card {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    html[data-theme="dark"] .detail-card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .detail-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        border-color: var(--color-primary);
+    }
+
+    html[data-theme="dark"] .detail-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .detail-label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--color-text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .detail-value {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+    }
+
+    .detail-value a {
+        color: var(--color-primary);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .detail-value a:hover {
+        color: var(--color-info);
+        text-decoration: underline;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        margin: 2.5rem 0 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--color-primary);
+    }
+
+    .section-icon {
+        margin-right: 0.8rem;
+        font-size: 1.5rem;
+    }
+
+    .comment-form-container {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    html[data-theme="dark"] .comment-form-container {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .comment-form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--color-border-main);
+    }
+
+    .comment-form-header h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--color-text-primary);
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .comment-form textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 1px solid var(--color-border-main);
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 1rem;
+        background-color: var(--color-bg-primary);
+        color: var(--color-text-primary);
+        min-height: 120px;
+        margin-bottom: 1rem;
+        resize: vertical;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .comment-form textarea:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    }
+
+    .comment-form-hint {
+        font-size: 0.85rem;
+        color: var(--color-text-secondary);
+        margin-bottom: 1rem;
+        font-style: italic;
+    }
+
+    .comment-submit-btn {
+        background-color: var(--color-primary);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: auto;
+    }
+
+    .comment-submit-btn:hover {
+        background-color: var(--color-info);
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .comments-list {
+        margin-bottom: 2rem;
+    }
+
+    .comment-item {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    html[data-theme="dark"] .comment-item {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .comment-item:hover {
+        border-color: var(--color-primary);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    html[data-theme="dark"] .comment-item:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .comment-header {
+        background: var(--color-bg-secondary);
+        padding: 1rem;
+        border-bottom: 1px solid var(--color-border-main);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .comment-meta-info {
+        flex: 1;
+    }
+
+    .comment-author {
+        font-weight: 700;
+        color: var(--color-text-primary);
+        margin-bottom: 0.3rem;
+    }
+
+    .comment-author a {
+        color: var(--color-primary);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .comment-author a:hover {
+        color: var(--color-info);
+        text-decoration: underline;
+    }
+
+    .comment-timestamp {
+        font-size: 0.85rem;
+        color: var(--color-text-secondary);
+    }
+
+    .comment-badge {
+        display: inline-block;
+        background-color: rgba(108, 117, 125, 0.2);
+        border: 1px solid #6c757d;
+        color: #6c757d;
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    html[data-theme="dark"] .comment-badge {
+        background-color: rgba(108, 117, 125, 0.3);
+    }
+
+    .comment-body {
+        padding: 1.5rem;
+        color: var(--color-text-secondary);
+        line-height: 1.7;
+    }
+
+    .empty-comments {
+        text-align: center;
+        padding: 2rem;
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        color: var(--color-text-secondary);
+    }
+
+    .empty-comments-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .badge-status {
+        display: inline-block;
+        padding: 0.35rem 0.85rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        border: 1.5px solid;
+        text-align: center;
+    }
+
+    .badge-assigned {
+        background-color: rgba(40, 167, 69, 0.15);
+        border-color: #28a745;
+        color: #28a745;
+    }
+
+    html[data-theme="dark"] .badge-assigned {
+        background-color: rgba(40, 167, 69, 0.25);
+    }
+
+    .badge-pending {
+        background-color: rgba(255, 193, 7, 0.15);
+        border-color: #ffc107;
+        color: #ff9800;
+    }
+
+    html[data-theme="dark"] .badge-pending {
+        background-color: rgba(255, 193, 7, 0.25);
+    }
+
+    @media (max-width: 768px) {
         .workshop-details-container {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 1rem;
+            margin: 1rem auto;
+            padding: 0;
+        }
+
+        .workshop-header {
+            padding: 1.5rem;
+            border-radius: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .workshop-header h2 {
+            font-size: 1.6rem;
         }
 
         .details-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 1rem;
-            margin-bottom: 2rem;
         }
 
-        .details-item {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 4px;
-            border-left: 4px solid #17a2b8;
+        .section-header {
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
         }
 
-        .details-item-full {
-            grid-column: 1 / -1;
-        }
-
-        .details-item label {
-            display: block;
-            font-size: 12px;
-            color: #6c757d;
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .details-item p {
-            margin: 0;
-            font-size: 16px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .details-item a {
-            color: #17a2b8;
-            text-decoration: none;
-        }
-
-        .details-item a:hover {
-            text-decoration: underline;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin: 2rem 0 1.5rem 0;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        .comment-form {
-            background-color: #f8f9fa;
+        .comment-form-container {
             padding: 1.5rem;
-            border-radius: 4px;
-            margin-bottom: 2rem;
+            border-radius: 0;
         }
 
         .comment-form-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
+            flex-direction: column;
+            align-items: flex-start;
+            border-bottom: none;
+            padding-bottom: 0;
             margin-bottom: 1rem;
-        }
-
-        .comment-form-header h4 {
-            margin: 0;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 14px;
-        }
-
-        .comment-form textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 14px;
-            min-height: 100px;
-            margin-bottom: 1rem;
-        }
-
-        .comment-form textarea:focus {
-            outline: none;
-            border-color: #17a2b8;
-            box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.1);
-        }
-
-        .comment-form .btn {
-            width: 100%;
-        }
-
-        .comment-item {
-            background-color: white;
-            border: 1px solid #e9ecef;
-            border-radius: 4px;
-            margin-bottom: 1rem;
-            overflow: hidden;
         }
 
         .comment-header {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-bottom: 1px solid #e9ecef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
-        .comment-author {
-            font-weight: 600;
-            color: #333;
+        .comment-item {
+            border-radius: 0;
         }
+    }
+</style>
 
-        .comment-author a {
-            color: #17a2b8;
-            text-decoration: none;
-        }
+<div class="workshop-details-container">
+    <div class="workshop-header">
+        <div class="workshop-header-subtitle">📋 Workshop Information</div>
+        <h2>Workshop Details</h2>
+    </div>
 
-        .comment-author a:hover {
-            text-decoration: underline;
-        }
-
-        .comment-meta {
-            font-size: 12px;
-            color: #6c757d;
-        }
-
-        .comment-badge {
-            font-size: 12px;
-        }
-
-        .comment-body {
-            padding: 1.5rem;
-        }
-
-        .comment-body p {
-            margin: 0;
-            line-height: 1.6;
-            color: #333;
-        }
-
-        @media (max-width: 767px) {
-            .workshop-details-container {
-                padding: 0;
-                padding-top: 1rem;
-            }
-
-            .details-grid {
-                grid-template-columns: 1fr;
-                gap: 0.75rem;
-            }
-
-            .details-item-full {
-                grid-column: 1;
-            }
-
-            .comment-form-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .comment-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .card {
-                border-radius: 0;
-                box-shadow: none;
-            }
-        }
-    </style>
-
-    <div class="workshop-details-container">
-        <h2 style="text-align: center; margin-bottom: 2rem;">Workshop Details</h2>
-
-        <!-- Details Grid -->
-        <div class="details-grid">
-            <div class="details-item">
-                <label>Workshop Type</label>
-                <p>
-                    <a href="{% url 'workshop_app:workshop_type_details' workshop.workshop_type_id %}">
-                        {{ workshop.workshop_type }}
-                    </a>
-                </p>
+    <!-- Details Grid -->
+    <div class="details-grid">
+        <div class="detail-card">
+            <span class="detail-label">📚 Workshop Type</span>
+            <div class="detail-value">
+                <a href="{% url 'workshop_app:workshop_type_details' workshop.workshop_type_id %}">
+                    {{ workshop.workshop_type }}
+                </a>
             </div>
-            <div class="details-item">
-                <label>Workshop Date</label>
-                <p>{{ workshop.date }}</p>
+        </div>
+        <div class="detail-card">
+            <span class="detail-label">📅 Date</span>
+            <div class="detail-value">{{ workshop.date }}</div>
+        </div>
+        <div class="detail-card">
+            <span class="detail-label">👤 Coordinator</span>
+            <div class="detail-value">{{ workshop.coordinator.get_full_name|title }}</div>
+        </div>
+        <div class="detail-card">
+            <span class="detail-label">✓ Status</span>
+            <div class="detail-value">
+                {% if workshop.status %}
+                    <span class="badge-status badge-assigned">Assigned</span>
+                {% else %}
+                    <span class="badge-status badge-pending">Pending</span>
+                {% endif %}
             </div>
-            <div class="details-item">
-                <label>Coordinator</label>
-                <p>{{ workshop.coordinator.get_full_name|title }}</p>
+        </div>
+        {% if workshop.status %}
+            <div class="detail-card" style="grid-column: 1 / -1;">
+                <span class="detail-label">🎓 Instructor</span>
+                <div class="detail-value">{{ workshop.instructor.get_full_name|title }}</div>
             </div>
-            <div class="details-item">
-                <label>Status</label>
-                <p>
-                    {% if workshop.status %}
-                        <span class="badge" style="background-color: #28a745; color: white;">{{ workshop.get_status }}</span>
-                    {% else %}
-                        <span class="badge" style="background-color: #ffc107; color: #333;">{{ workshop.get_status }}</span>
-                    {% endif %}
-                </p>
+        {% endif %}
+    </div>
+
+    <!-- Comments Section -->
+    <div class="section-header">
+        <span class="section-icon">💬</span>
+        <span>Discussion & Comments</span>
+    </div>
+
+    <!-- Comment Form -->
+    <div class="comment-form-container">
+        <form method="post">
+            {% csrf_token %}
+            <div class="comment-form-header">
+                <h4>✏️ Post a Comment</h4>
+                {% if request.user.profile.position == 'instructor' %}
+                    <div class="checkbox-group">
+                        {{ form.public }}
+                        <label for="{{ form.public.id_for_label }}" style="margin: 0;">
+                            Make Public
+                        </label>
+                    </div>
+                {% endif %}
             </div>
-            {% if workshop.status %}
-                <div class="details-item details-item-full">
-                    <label>Assigned Instructor</label>
-                    <p>{{ workshop.instructor.get_full_name|title }}</p>
+            {% if request.user.profile.position == 'instructor' %}
+                <div class="comment-form-hint">
+                    💡 By default, your comments are visible only to instructors. Check "Make Public" to share with everyone.
                 </div>
             {% endif %}
-        </div>
+            {{ form.comment }}
+            <button type="submit" class="comment-submit-btn">
+                📤 Post Comment
+            </button>
+        </form>
+    </div>
 
-        <!-- Comments Section -->
-        <h3 class="section-title">Discussion & Comments</h3>
-
-        <!-- Comment Form -->
-        <div class="comment-form">
-            <form method="post">
-                {% csrf_token %}
-                <div class="comment-form-header">
-                    <h4>Post a Comment</h4>
-                    {% if request.user.profile.position == 'instructor' %}
-                        <div class="checkbox-group">
-                            {{ form.public }} <label for="{{ form.public.id_for_label }}">Make Public</label>
-                        </div>
-                    {% endif %}
-                </div>
-                {% if request.user.profile.position == 'instructor' %}
-                    <small class="text-muted" style="display: block; margin-bottom: 1rem;">
-                        Non-public comments are visible only to instructors
-                    </small>
-                {% endif %}
-                {{ form.comment }}
-                <button type="submit" class="btn btn-primary">Post Comment</button>
-            </form>
-        </div>
-
-        <!-- Comments List -->
-        {% if workshop_comments %}
-            <h4 style="margin: 2rem 0 1rem 0;">Recent Comments</h4>
+    <!-- Comments List -->
+    {% if workshop_comments %}
+        <div class="comments-list">
+            <h4 style="margin: 0 0 1.5rem; font-size: 1.1rem; font-weight: 600; color: var(--color-text-primary);">
+                Recent Comments ({{ workshop_comments|length }})
+            </h4>
             {% for comment in workshop_comments %}
                 <div class="comment-item">
                     <div class="comment-header">
-                        <div style="flex: 1;">
-                            <span class="comment-author">
+                        <div class="comment-meta-info">
+                            <div class="comment-author">
                                 <a href="{% url 'workshop_app:view_profile' comment.author_id %}">
                                     {{ comment.author }}
                                 </a>
-                            </span>
-                            <span class="comment-meta">{{ comment.created_date }}</span>
+                            </div>
+                            <div class="comment-timestamp">
+                                📅 {{ comment.created_date }}
+                            </div>
                         </div>
                         {% if not comment.public %}
-                            <span class="badge comment-badge" style="background-color: #6c757d; color: white;">
-                                Instructor Only
-                            </span>
+                            <span class="comment-badge">🔒 Instructor Only</span>
                         {% endif %}
                     </div>
                     <div class="comment-body">
@@ -286,11 +477,12 @@
                     </div>
                 </div>
             {% endfor %}
-        {% else %}
-            <div style="text-align: center; padding: 2rem; background-color: #f8f9fa; border-radius: 4px;">
-                <p class="text-muted">No comments yet. Be the first to discuss!</p>
-            </div>
-        {% endif %}
-    </div>
-
+        </div>
+    {% else %}
+        <div class="empty-comments">
+            <div class="empty-comments-icon">💭</div>
+            <p style="margin: 0;">No comments yet. Be the first to discuss!</p>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
