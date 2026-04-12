@@ -1,32 +1,201 @@
 {% extends 'workshop_app/base.html' %}
 
 {% block title %}
-    View Workshop details
+    {{ workshop_type.name }}
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h2 class="text-center m-3">Workshop Details</h2>
-        <table class="table table-hover">
-            <tr class="d-flex">
-                <th class="col-3">Workshop Name :</th>
-                <td class="col">{{ workshop_type.name }}</td>
-            </tr>
-            <tr class="d-flex">
-                <th class="col-3">Duration :</th>
-                <td class="col">{{ workshop_type.duration }} day(s)</td>
-            </tr>
-            <tr class="d-flex">
-                <th class="col-3">Description :</th>
-                <td class="col">{{ workshop_type.description }}</td>
-            </tr>
-            <tr class="d-flex">
-                <th class="col-3">Terms and Conditions :</th>
-                <td class="col">{{ workshop_type.terms_and_conditions }}</td>
-            </tr>
-        </table>
+<style>
+    .workshop-details-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .workshop-header {
+        background: linear-gradient(135deg, var(--color-primary), var(--color-info));
+        color: white;
+        padding: 2.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    html[data-theme="dark"] .workshop-header {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .workshop-header h1 {
+        margin: 0;
+        font-size: 2.2rem;
+        font-weight: 700;
+    }
+
+    .workshop-header-subtitle {
+        margin: 0.5rem 0 0;
+        opacity: 0.95;
+        font-size: 1.1rem;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .detail-card {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    html[data-theme="dark"] .detail-card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .detail-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        border-color: var(--color-primary);
+    }
+
+    html[data-theme="dark"] .detail-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .detail-label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--color-text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .detail-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+    }
+
+    .detail-icon {
+        display: inline-block;
+        margin-right: 0.5rem;
+        font-size: 1.8rem;
+    }
+
+    .description-section {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    html[data-theme="dark"] .description-section {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        margin: 0 0 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--color-primary);
+    }
+
+    .section-content {
+        color: var(--color-text-secondary);
+        line-height: 1.7;
+        font-size: 1rem;
+    }
+
+    .back-button {
+        display: inline-block;
+        margin-bottom: 1rem;
+        color: var(--color-primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .back-button:hover {
+        color: var(--color-info);
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .workshop-header {
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .workshop-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .description-section {
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+        }
+    }
+
+    .highlight {
+        background-color: var(--color-primary);
+        color: white;
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="workshop-details-container">
+    <a href="javascript:history.back()" class="back-button">← Back</a>
+
+    <div class="workshop-header">
+        <div class="workshop-header-subtitle">📚 Workshop Details</div>
+        <h1>{{ workshop_type.name }}</h1>
     </div>
 
+    <div class="details-grid">
+        <div class="detail-card">
+            <span class="detail-label">
+                <span class="detail-icon">⏱️</span>Duration
+            </span>
+            <div class="detail-value">{{ workshop_type.duration }} Day{% if workshop_type.duration != 1 %}s{% endif %}</div>
+        </div>
+    </div>
+
+    <div class="description-section">
+        <h2 class="section-title">📝 Description</h2>
+        <div class="section-content">
+            {{ workshop_type.description }}
+        </div>
+    </div>
+
+    <div class="description-section">
+        <h2 class="section-title">⚖️ Terms and Conditions</h2>
+        <div class="section-content">
+            {{ workshop_type.terms_and_conditions }}
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 
