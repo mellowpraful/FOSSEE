@@ -6,6 +6,7 @@
 
 {% block content %}
     <style>
+        /* Centered login card - should be narrower on desktop */
         .login-container {
             display: flex;
             justify-content: center;
@@ -24,17 +25,6 @@
             margin: 0;
         }
 
-        .form-group input {
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .btn-signin {
-            width: 100%;
-            margin-top: 1rem;
-            padding: 0.75rem;
-        }
-
         .login-links {
             text-align: center;
             margin-top: 1.5rem;
@@ -48,19 +38,13 @@
             text-decoration: none;
             font-size: 14px;
             padding: 0.5rem 0;
-            transition: color 0.3s ease;
         }
 
         .login-links a:hover {
-            color: #138496;
             text-decoration: underline;
         }
 
         @media (max-width: 767px) {
-            .login-container {
-                padding-top: 1rem;
-            }
-
             .login-card {
                 max-width: 100%;
             }

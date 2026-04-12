@@ -3,97 +3,147 @@
 {% block title %} Statistics {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<style>
+    /* smooth hover effects for interactive elements */
+    .filter-buttons button:hover,
+    .filter-buttons a:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+    }
+    
+    .chart-buttons button:hover {
+        opacity: 0.95;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(23, 162, 184, 0.3);
+    }
+    
+    .table tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+</style>
+
+<div class="container-fluid stats-container">
     <div class="row">
         <div class="col-md-3">
             <form method="GET">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <h3><u>Filters</u></h3>
+                <div class="filters-card" style="border: 1px solid #d5d5d5 !important; background-color: #fafbfc !important; border-radius: 3px !important; box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;">
+                    <div class="card-header" style="padding: 13px 15px !important; border-bottom: 1px solid #e0e0e0 !important; background: linear-gradient(to bottom, #f8f8f8, #f3f3f3) !important;">
+                        <h3 style="margin: 0 !important; font-size: 15px !important; font-weight: 600 !important; color: #2c3e50 !important; letter-spacing: 0.5px !important;">📊 Filters</h3>
+                    </div>
+                    <div class="card-body" style="padding: 15px !important;">
+                        <!-- Date range section -->
+                        <div style="margin-bottom: 14px !important; padding-bottom: 12px !important; border-bottom: 1px solid #e9ecef !important;">
+                            <div class="filter-group" style="margin-bottom: 10px !important;">
+                                <label style="font-size: 13px !important; font-weight: 500 !important; color: #495057 !important;">📅 From date</label>
+                                {{form.from_date}}
                             </div>
-                            <div class="col-md-4">
-                                <a href="{% url 'statistics_app:public' %}" class="btn btn-outline-info">
-                                    <i class="fa fa-times"></i>&nbsp;Clear
-                                </a>
+                            <div class="filter-group">
+                                <label style="font-size: 13px !important; font-weight: 500 !important; color: #495057 !important;">📅 To date</label>
+                                {{form.to_date}}
                             </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div>From date: {{form.from_date}}</div>
-                        <div>To date: {{form.to_date}}</div>
-                        <div>Workshop: {{form.workshop_type}}</div>
-                        <div>State: {{form.state}}</div>
-                        <div>{{form.sort.help_text}}: {{form.sort}}</div>
-                        {% if request.user.is_authenticated %}
-                        <div>{{form.show_workshops.help_text}}: {{form.show_workshops}}</div>
-                        {% endif %}
-                        <br>
-                        <div class="row justify-content-center">
-                            <div class="col-md-4">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fa fa-eye"></i>&nbsp;View
-                                </button>
+                        
+                        <!-- Workshop and state section -->
+                        <div style="margin-bottom: 14px !important; padding-bottom: 12px !important; border-bottom: 1px solid #e9ecef !important;">
+                            <div class="filter-group" style="margin-bottom: 10px !important;">
+                                <label style="font-size: 13px !important; font-weight: 500 !important; color: #495057 !important;">📚 Workshop Type</label>
+                                {{form.workshop_type}}
                             </div>
-                            <div class="col-md-6">
-                                <button type="submit" class="btn btn-info" name="download" value="download">
-                                    <i class="fa fa-download"></i>&nbsp;Download
-                                </button>
+                            <div class="filter-group">
+                                <label style="font-size: 13px !important; font-weight: 500 !important; color: #495057 !important;">🌍 State</label>
+                                {{form.state}}
                             </div>
+                        </div>
+                        
+                        <!-- Sort and view options -->
+                        <div style="margin-bottom: 14px !important;">
+                            <div class="filter-group" style="margin-bottom: 10px !important;">
+                                <label style="font-size: 13px !important; font-weight: 500 !important; color: #495057 !important;">⚙️ {{form.sort.help_text}}</label>
+                                {{form.sort}}
+                            </div>
+                            {% if request.user.is_authenticated %}
+                            <div class="filter-group">
+                                {{form.show_workshops}}
+                                <label style="display: inline !important; font-size: 13px !important; margin-left: 6px !important; color: #495057 !important;">{{form.show_workshops.help_text}}</label>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Action buttons -->
+                        <div class="filter-buttons" style="display: flex !important; gap: 8px !important; margin-top: 14px !important; padding-top: 12px !important; border-top: 1px solid #e9ecef !important;">
+                            <button type="submit" class="btn btn-success btn-submit-filter" style="flex: 1 !important; padding: 10px 12px !important; font-size: 13px !important; border-radius: 4px !important; border: none !important; background-color: #27ae60 !important; color: white !important; font-weight: 500 !important; cursor: pointer !important;">
+                                <i class="fa fa-search"></i>&nbsp;View
+                            </button>
+                            <button type="submit" class="btn btn-info" name="download" value="download" style="flex: 1 !important; padding: 10px 12px !important; font-size: 13px !important; border-radius: 4px !important; border: none !important; background-color: #3498db !important; color: white !important; font-weight: 500 !important; cursor: pointer !important;">
+                                <i class="fa fa-download"></i>&nbsp;Download
+                            </button>
+                            <a href="{% url 'statistics_app:public' %}" class="btn btn-clear" style="flex: 1 !important; padding: 10px 12px !important; font-size: 13px !important; border-radius: 4px !important; background-color: #ecf0f1 !important; color: #34495e !important; border: 1px solid #bdc3c7 !important; text-decoration: none !important; display: flex !important; align-items: center !important; justify-content: center !important; font-weight: 500 !important; cursor: pointer !important;">
+                                <i class="fa fa-refresh"></i>&nbsp;Clear
+                            </a>
                         </div>
                     </div>
                 </div>
             </form>
         </div>
         <div class="col">
-            <div class="row">
-                <div class="col-md-6">
+            <!-- Main content card -->
+            <div class="content-card" style="border: 1px solid #d5d9df !important; border-radius: 4px !important; background-color: white !important; padding: 16px !important; box-shadow: 0 1px 4px rgba(0,0,0,0.08) !important;">
+                <!-- Top controls: pagination and charts -->
+                <div class="stats-controls" style="display: flex !important; justify-content: space-between !important; align-items: center !important; margin-bottom: 14px !important; padding-bottom: 12px !important; border-bottom: 1px solid #e8eef5 !important;">
+                    <div class="paginator-section">
+                        {% include "statistics_app/paginator.html" %}
+                    </div>
+                    <div class="chart-buttons" style="display: flex !important; gap: 8px !important;">
+                        <button class="btn btn-info" id="state_graph" style="padding: 8px 13px !important; font-size: 12px !important; white-space: nowrap !important; border-radius: 4px !important; background-color: #16a085 !important; color: white !important; border: none !important; cursor: pointer !important; font-weight: 500 !important;">
+                            <i class="fa fa-bar-chart"></i>&nbsp;State Chart
+                        </button>
+                        <button class="btn btn-info" id="type_graph" style="padding: 8px 13px !important; font-size: 12px !important; white-space: nowrap !important; border-radius: 4px !important; background-color: #2980b9 !important; color: white !important; border: none !important; cursor: pointer !important; font-weight: 500 !important;">
+                            <i class="fa fa-bar-chart"></i>&nbsp;Workshop Chart
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Table section -->
+                <div class="table-section" style="margin-bottom: 0 !important; overflow-x: auto !important;">
+                    <table class="table table-responsive-sm" style="margin-bottom: 0 !important; border-collapse: collapse !important; width: 100% !important;">
+                        <thead>
+                            <tr style="background-color: #3d4f5c !important; color: white !important;">
+                                <th style="background-color: #3d4f5c !important; font-weight: 600 !important; border: none !important; color: white !important; padding: 12px 10px !important; font-size: 12px !important; text-align: left !important;">Sr No.</th>
+                                <th style="background-color: #3d4f5c !important; font-weight: 600 !important; border: none !important; color: white !important; padding: 12px 10px !important; font-size: 12px !important; text-align: left !important;">Coordinator</th>
+                                <th style="background-color: #3d4f5c !important; font-weight: 600 !important; border: none !important; color: white !important; padding: 12px 10px !important; font-size: 12px !important; text-align: left !important;">Institute</th>
+                                <th style="background-color: #3d4f5c !important; font-weight: 600 !important; border: none !important; color: white !important; padding: 12px 10px !important; font-size: 12px !important; text-align: left !important;">Instructor</th>
+                                <th style="background-color: #3d4f5c !important; font-weight: 600 !important; border: none !important; color: white !important; padding: 12px 10px !important; font-size: 12px !important; text-align: left !important;">Workshop</th>
+                                <th style="background-color: #3d4f5c !important; font-weight: 600 !important; border: none !important; color: white !important; padding: 12px 10px !important; font-size: 12px !important; text-align: left !important;">Date</th>
+                            </tr>
+                        </thead>
+                        {% csrf_token %}
+                        {% for workshop in objects %}
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #e8eef5 !important;">
+                                    <td style="padding: 12px 10px !important; font-size: 12px !important; color: #2c3e50 !important;">{{ forloop.counter0|add:objects.start_index}}</td>
+                                    <td style="padding: 12px 10px !important; font-size: 12px !important; color: #34495e !important;">{{ workshop.coordinator.get_full_name | capfirst }}</td>
+                                    <td style="padding: 12px 10px !important; font-size: 12px !important; color: #555 !important;">{{ workshop.coordinator.profile.institute | capfirst }}</td>
+                                    <td style="padding: 12px 10px !important; font-size: 12px !important; color: #34495e !important;">{{ workshop.instructor.get_full_name | capfirst }}</td>
+                                    <td style="padding: 12px 10px !important; font-size: 12px !important; color: #16a085 !important; font-weight: 500 !important;">{{ workshop.workshop_type.name }}</td>
+                                    <td style="padding: 12px 10px !important; font-size: 12px !important; color: #7f8c8d !important;">{{ workshop.date | date}}</td>
+                                </tr>
+                            </tbody>
+                        {% endfor %}
+                    </table>
+                </div>
+                
+                <!-- Bottom pagination -->
+                <div class="paginator-section bottom-paginator" style="margin-top: 12px !important; padding-top: 11px !important; border-top: 1px solid #e8eef5 !important;">
                     {% include "statistics_app/paginator.html" %}
                 </div>
-                <div class="col-md-3">
-                    <button class="btn btn-info" id="state_graph">
-                        <i class="fa fa-bar-chart"></i>&nbsp;State chart
-                    </button>
-                </div>
-                <div class="col-md-3">
-                    <button class="btn btn-info" id="type_graph">
-                        <i class="fa fa-bar-chart"></i>&nbsp;Workshops chart
-                    </button>
-                </div>
             </div>
-            <table class="table table-responsive-sm">
-                <thead>
-                    <tr>
-                        <th>Sr No.</th>
-                        <th>Coordinator Name</th>
-                        <th>Institute Name</th>
-                        <th>Instructor Name</th>
-                        <th>Workshop Name</th>
-                        <th>Workshop Date</th>
-                    </tr>
-                </thead>
-                {% csrf_token %}
-                {% for workshop in objects %}
-                    <tbody>
-                        <tr>
-                            <td>{{ forloop.counter0|add:objects.start_index}}</td>
-                            <td>{{ workshop.coordinator.get_full_name | capfirst }}</td>
-                            <td>{{ workshop.coordinator.profile.institute | capfirst }}</td>
-                            <td>{{ workshop.instructor.get_full_name | capfirst }}</td>
-                            <td>{{ workshop.workshop_type.name }}</td>
-                            <td>{{ workshop.date | date}}</td>
-                        </tr>
-                    </tbody>
-                {% endfor %}
-            </table>
-            {% include "statistics_app/paginator.html" %}
         </div>
     </div>
 </div>
 
 <!-- The Modal -->
-<div id="dialog" title="Workshops Statistics">
+<div id="dialog" title="Workshops Statistics" style="border-radius: 4px !important;">
     <canvas id="myChart"></canvas>
 </div>
 
@@ -104,10 +154,10 @@
     var type_data = {{ws_type_count|safe}};
     var chart;
     $("#state_graph").on("click", function() {
-        show_graph(state_labels, state_data, "State wise workshops");
+        show_graph(state_labels, state_data, "State wise Workshops");
     });
     $("#type_graph").on("click", function() {
-        show_graph(type_labels, type_data, "Type wise workshops");
+        show_graph(type_labels, type_data, "Type wise Workshops");
     });
 
     function show_graph(labels, data, graph_name, chart_name) {
@@ -123,16 +173,31 @@
                 datasets: [{
                     data: data,
                     label: graph_name,
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgba(22, 160, 133, 0.8)',
+                    borderColor: 'rgba(22, 160, 133, 1)',
+                    borderWidth: 1
                 }]
             },
-            // Configuration options go here
-            options: {}
+            // Configuration options
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
         });
         $("#dialog").dialog({
             width: 900,
-            height: 500
+            height: 500,
+            modal: true,
+            buttons: {
+                Close: function() {
+                    $(this).dialog("close");
+                }
+            }
         });
     }
 </script>

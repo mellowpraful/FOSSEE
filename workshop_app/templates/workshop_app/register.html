@@ -6,6 +6,7 @@
 
 {% block content %}
     <style type="text/css">
+        /* Centered form on desktop, full width on mobile */
         .register-container {
             max-width: 600px;
             margin: 0 auto;
@@ -16,46 +17,9 @@
             margin-bottom: 2rem;
         }
 
-        .form-wrapper {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #333;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            font-size: 14px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: inherit;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #17a2b8;
-            box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.1);
-        }
-
-        .form-group.errors input,
-        .form-group.errors select,
-        .form-group.errors textarea {
-            border-color: #dc3545;
-            background-color: #fff5f5;
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
         }
 
         .help-text {
@@ -75,11 +39,6 @@
 
         .errorlist li {
             margin-bottom: 0.25rem;
-        }
-
-        .page-title {
-            text-align: center;
-            margin-bottom: 2rem;
         }
 
         .btn-submit {
