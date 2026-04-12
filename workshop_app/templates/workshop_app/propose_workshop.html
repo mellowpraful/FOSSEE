@@ -73,16 +73,16 @@
             align-items: flex-start;
             gap: 0.75rem;
             margin: 1rem 0;
-            flex-wrap: wrap;
+            width: 100%;
         }
 
         .checkbox-group input[type="checkbox"] {
             width: 18px;
             height: 18px;
+            min-width: 18px;
             margin: 0;
             padding: 0;
             cursor: pointer;
-            flex-shrink: 0;
             accent-color: var(--color-primary);
             margin-top: 2px;
         }
@@ -93,10 +93,10 @@
             cursor: pointer;
             font-weight: normal;
             font-size: 14px;
-            line-height: 18px;
-            flex: 1;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+            line-height: 1.5;
+            flex: 1 1 auto;
+            min-width: 0;
+            white-space: normal;
         }
 
         .checkbox-group a {
