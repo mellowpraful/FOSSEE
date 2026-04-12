@@ -70,9 +70,10 @@
 
         .checkbox-group {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 0.75rem;
             margin: 1rem 0;
+            flex-wrap: wrap;
         }
 
         .checkbox-group input[type="checkbox"] {
@@ -83,6 +84,7 @@
             cursor: pointer;
             flex-shrink: 0;
             accent-color: var(--color-primary);
+            margin-top: 2px;
         }
 
         .checkbox-group label {
@@ -92,7 +94,9 @@
             font-weight: normal;
             font-size: 14px;
             line-height: 18px;
-            display: inline;
+            flex: 1;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         .checkbox-group a {
