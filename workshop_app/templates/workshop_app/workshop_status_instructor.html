@@ -321,58 +321,61 @@
                 <h3>Workshops Proposed By Coordinators</h3>
             </div>
 
-            {% if workshops|dictsort:"status" %}
-                {% with proposed=False %}
-                {% for workshop in workshops %}
-                    {% if not workshop.status and workshop.tnc_accepted %}
-                        {% if not proposed %}
-                            <div class="workshops-table-container">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Coordinator Name</th>
-                                            <th>Institute</th>
-                                            <th>Workshop Name</th>
-                                            <th>Proposed Date</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                        {% else %}
-                        <tr>
-                            <td>
-                                <a href="{% url 'workshop_app:view_profile' workshop.coordinator.id %}" class="workshop-link">
-                                    {{ workshop.coordinator.get_full_name }}
-                                </a>
-                            </td>
-                            <td>{{ workshop.coordinator.profile.institute|capfirst }}</td>
-                            <td>{{ workshop.workshop_type|capfirst }}</td>
-                            <td>{{ workshop.date|date:"d M, Y" }}</td>
-                            <td>
-                                <span class="badge-status badge-pending">{{ workshop.get_status }}</span>
-                            </td>
-                            <td>
-                                <button class="btn-accept" 
-                                        onclick="return confirm('Once accepted you cannot reject. Please personally contact the Coordinator if cancellation is needed. Accept this workshop?')">
-                                    <a href="{% url 'workshop_app:accept_workshop' workshop.id %}" style="color: white; text-decoration: none;">
-                                        ✓ Accept
-                                    </a>
-                                </button>
-                            </td>
-                        </tr>
+            {% with has_proposals=False %}
+            {% for workshop in workshops %}
+                {% if not workshop.status and workshop.tnc_accepted %}
+                    {% if not has_proposals %}
+                        <div class="workshops-table-container">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Coordinator Name</th>
+                                        <th>Institute</th>
+                                        <th>Workshop Name</th>
+                                        <th>Proposed Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                     {% endif %}
-                {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                {% endwith %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'workshop_app:view_profile' workshop.coordinator.id %}" class="workshop-link">
+                                {{ workshop.coordinator.get_full_name }}
+                            </a>
+                        </td>
+                        <td>{{ workshop.coordinator.profile.institute|capfirst }}</td>
+                        <td>{{ workshop.workshop_type|capfirst }}</td>
+                        <td>{{ workshop.date|date:"d M, Y" }}</td>
+                        <td>
+                            <span class="badge-status badge-pending">{{ workshop.get_status }}</span>
+                        </td>
+                        <td>
+                            <button class="btn-accept" 
+                                    onclick="return confirm('Once accepted you cannot reject. Please personally contact the Coordinator if cancellation is needed. Accept this workshop?')">
+                                <a href="{% url 'workshop_app:accept_workshop' workshop.id %}" style="color: white; text-decoration: none;">
+                                    ✓ Accept
+                                </a>
+                            </button>
+                        </td>
+                    </tr>
+                    {% if not has_proposals %}
+                        {% with has_proposals=True %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% if has_proposals %}
+                                </tbody>
+                            </table>
+                        </div>
             {% else %}
                 <div class="empty-state">
                     <div class="empty-state-icon">📬</div>
                     <p>No pending proposals yet.</p>
                 </div>
             {% endif %}
+            {% endwith %}
 
         {% endif %}
     </div>

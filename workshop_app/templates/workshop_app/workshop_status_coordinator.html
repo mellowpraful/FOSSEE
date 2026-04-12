@@ -282,45 +282,48 @@
                 <h3>Workshops Proposed By Me</h3>
             </div>
 
-            {% if workshops|dictsort:"status" %}
-                {% with proposed=False %}
-                {% for workshop in workshops %}
-                    {% if not workshop.status and workshop.tnc_accepted %}
-                        {% if not proposed %}
-                            <div class="workshops-table-container">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Workshop Name</th>
-                                            <th>Proposed Date</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                        {% else %}
-                        <tr>
-                            <td><a href="{% url 'workshop_app:workshop_details' workshop.id %}" class="workshop-link">{{ workshop.workshop_type|capfirst }}</a></td>
-                            <td>{{ workshop.date|date:"d M, Y" }}</td>
-                            <td>
-                                <span class="badge-status badge-pending">{{ workshop.get_status }}</span>
-                            </td>
-                            <td>
-                                <a href="{% url 'workshop_app:workshop_details' workshop.id %}" class="workshop-link" style="font-size: 0.9rem;">View →</a>
-                            </td>
-                        </tr>
+            {% with has_proposals=False %}
+            {% for workshop in workshops %}
+                {% if not workshop.status and workshop.tnc_accepted %}
+                    {% if not has_proposals %}
+                        <div class="workshops-table-container">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Workshop Name</th>
+                                        <th>Proposed Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                         {% endif %}
-                {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                {% endwith %}
+                            <tr>
+                                <td><a href="{% url 'workshop_app:workshop_details' workshop.id %}" class="workshop-link">{{ workshop.workshop_type|capfirst }}</a></td>
+                                <td>{{ workshop.date|date:"d M, Y" }}</td>
+                                <td>
+                                    <span class="badge-status badge-pending">{{ workshop.get_status }}</span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'workshop_app:workshop_details' workshop.id %}" class="workshop-link" style="font-size: 0.9rem;">View →</a>
+                                </td>
+                            </tr>
+                        {% if not has_proposals %}
+                            {% with has_proposals=True %}
+                        {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% if has_proposals %}
+                                </tbody>
+                            </table>
+                        </div>
             {% else %}
                 <div class="empty-state">
                     <div class="empty-state-icon">📝</div>
                     <p>No pending proposals yet.</p>
                 </div>
             {% endif %}
+            {% endwith %}
 
         {% endif %}
     </div>
