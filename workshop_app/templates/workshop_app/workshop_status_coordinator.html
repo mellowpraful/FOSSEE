@@ -282,41 +282,46 @@
                 <h3>Workshops Proposed By Me</h3>
             </div>
 
-            {% with has_proposals=False %}
-            {% for workshop in workshops %}
-                {% if not workshop.status and workshop.tnc_accepted %}
-                    {% if not has_proposals %}
-                        <div class="workshops-table-container">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Workshop Name</th>
-                                        <th>Proposed Date</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+            {% regroup workshops by status as grouped_workshops %}
+            {% with proposals=workshops %}
+            {% if proposals %}
+                {% for proposal in proposals %}
+                    {% if not proposal.status and proposal.tnc_accepted %}
+                        {% if forloop.first %}
+                            <div class="workshops-table-container">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Workshop Name</th>
+                                            <th>Proposed Date</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                         {% endif %}
-                            <tr>
-                                <td><a href="{% url 'workshop_app:workshop_details' workshop.id %}" class="workshop-link">{{ workshop.workshop_type|capfirst }}</a></td>
-                                <td>{{ workshop.date|date:"d M, Y" }}</td>
-                                <td>
-                                    <span class="badge-status badge-pending">{{ workshop.get_status }}</span>
-                                </td>
-                                <td>
-                                    <a href="{% url 'workshop_app:workshop_details' workshop.id %}" class="workshop-link" style="font-size: 0.9rem;">View →</a>
-                                </td>
-                            </tr>
-                        {% if not has_proposals %}
-                            {% with has_proposals=True %}
+                        <tr>
+                            <td><a href="{% url 'workshop_app:workshop_details' proposal.id %}" class="workshop-link">{{ proposal.workshop_type|capfirst }}</a></td>
+                            <td>{{ proposal.date|date:"d M, Y" }}</td>
+                            <td>
+                                <span class="badge-status badge-pending">{{ proposal.get_status }}</span>
+                            </td>
+                            <td>
+                                <a href="{% url 'workshop_app:workshop_details' proposal.id %}" class="workshop-link" style="font-size: 0.9rem;">View →</a>
+                            </td>
+                        </tr>
+                        {% if forloop.last %}
+                                    </tbody>
+                                </table>
+                            </div>
                         {% endif %}
-                {% endif %}
-            {% endfor %}
-            {% if has_proposals %}
-                                </tbody>
-                            </table>
-                        </div>
+                    {% endif %}
+                {% empty %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <p>No pending proposals yet.</p>
+                    </div>
+                {% endfor %}
             {% else %}
                 <div class="empty-state">
                     <div class="empty-state-icon">📝</div>
