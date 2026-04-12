@@ -4,312 +4,476 @@
 
 {% csrf_token %}
 {% block content %}
-    <style type="text/css">
-        /* Display and manage user profile */
+<style>
+    .profile-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg, var(--color-primary), var(--color-info));
+        color: white;
+        padding: 2.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    html[data-theme="dark"] .profile-header {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .profile-header h2 {
+        margin: 0 0 0.5rem;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .profile-header-subtitle {
+        opacity: 0.95;
+        margin: 0;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .profile-card {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    html[data-theme="dark"] .profile-card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .profile-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        border-color: var(--color-primary);
+    }
+
+    html[data-theme="dark"] .profile-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .profile-label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--color-text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-value {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        word-break: break-word;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        margin: 2.5rem 0 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--color-primary);
+    }
+
+    .section-icon {
+        margin-right: 0.75rem;
+        font-size: 1.4rem;
+    }
+
+    .workshops-table-container {
+        overflow-x: auto;
+        margin-bottom: 2rem;
+    }
+
+    .workshops-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    html[data-theme="dark"] .workshops-table {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .workshops-table thead {
+        background: var(--color-bg-secondary);
+        border-bottom: 2px solid var(--color-border-main);
+    }
+
+    .workshops-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .workshops-table tbody tr {
+        border-bottom: 1px solid var(--color-border-main);
+        transition: background-color 0.2s ease;
+    }
+
+    .workshops-table tbody tr:hover {
+        background-color: var(--color-bg-tertiary);
+    }
+
+    .workshops-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .workshops-table td {
+        padding: 1rem;
+        color: var(--color-text-secondary);
+    }
+
+    .badge-status {
+        display: inline-block;
+        padding: 0.35rem 0.85rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        border: 1.5px solid;
+        text-align: center;
+    }
+
+    .badge-assigned {
+        background-color: rgba(40, 167, 69, 0.15);
+        border-color: #28a745;
+        color: #28a745;
+    }
+
+    html[data-theme="dark"] .badge-assigned {
+        background-color: rgba(40, 167, 69, 0.25);
+    }
+
+    .badge-pending {
+        background-color: rgba(255, 193, 7, 0.15);
+        border-color: #ffc107;
+        color: #ff9800;
+    }
+
+    html[data-theme="dark"] .badge-pending {
+        background-color: rgba(255, 193, 7, 0.25);
+    }
+
+    .edit-btn {
+        background-color: var(--color-primary);
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+    }
+
+    .edit-btn:hover {
+        background-color: var(--color-info);
+        transform: translateY(-1px);
+    }
+
+    .form-container {
+        max-width: 700px;
+        margin: 0 auto;
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    html[data-theme="dark"] .form-container {
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--color-border-main);
+        border-radius: 6px;
+        font-size: 1rem;
+        font-family: inherit;
+        background-color: var(--color-bg-primary);
+        color: var(--color-text-primary);
+        transition: border-color 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    }
+
+    .error-alert {
+        background-color: rgba(220, 53, 69, 0.15);
+        border: 1px solid #dc3545;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        color: #dc3545;
+    }
+
+    html[data-theme="dark"] .error-alert {
+        background-color: rgba(220, 53, 69, 0.25);
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .button-group .btn {
+        flex: 1;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 1rem;
+    }
+
+    .btn-submit {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-submit:hover {
+        background-color: #218838;
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+        background-color: var(--color-bg-secondary);
+        color: var(--color-text-primary);
+        border: 1px solid var(--color-border-main);
+    }
+
+    .btn-cancel:hover {
+        background-color: var(--color-bg-tertiary);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--color-text-secondary);
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
         .profile-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 1rem;
+            padding: 0;
+            margin: 1rem auto;
         }
 
-        .profile-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+        .profile-header {
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
-        .profile-info-item {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 4px;
-            border-left: 4px solid #17a2b8;
+        .profile-header h2 {
+            font-size: 1.6rem;
         }
 
-        .profile-info-item label {
-            display: block;
-            font-size: 12px;
-            color: #6c757d;
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+        .profile-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
         }
 
-        .profile-info-item p {
-            margin: 0;
-            font-size: 16px;
-            color: #333;
-            font-weight: 500;
+        .section-header {
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
         }
 
-        .section-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin: 2rem 0 1.5rem 0;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        .workshops-table {
-            width: 100%;
-            margin-bottom: 2rem;
-            border-collapse: collapse;
-        }
-
-        .workshops-table thead {
-            background-color: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
-        }
-
-        .workshops-table th {
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: #333;
-        }
-
+        .workshops-table th,
         .workshops-table td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.4rem 0.8rem;
-            background-color: #ffc107;
-            color: #333;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .edit-form-container {
-            max-width: 600px;
-            margin: 0 auto;
+            padding: 0.75rem 0.5rem;
+            font-size: 0.9rem;
         }
 
         .button-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
+            flex-direction: column;
         }
 
-        .button-group .btn {
-            flex: 1;
-            margin: 0;
+        .form-container {
+            padding: 1.5rem;
         }
+    }
+</style>
 
-        @media (max-width: 767px) {
-            .profile-container {
-                padding: 0;
-                padding-top: 1rem;
-            }
+<div class="profile-container">
+    {% if Workshops %}
+        <!-- Profile View Mode -->
+        <div class="profile-header">
+            <div class="profile-header-subtitle">👤 Your Profile</div>
+            <h2>{{ coordinator_profile.user.first_name }} {{ coordinator_profile.user.last_name }}</h2>
+        </div>
 
-            .profile-info {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            .button-group .btn {
-                width: 100%;
-            }
-
-            .workshops-table thead {
-                display: none;
-            }
-
-            .workshops-table tbody tr {
-                display: block;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                margin-bottom: 1rem;
-                padding: 1rem;
-                overflow: hidden;
-            }
-
-            .workshops-table tbody td {
-                display: block;
-                text-align: right;
-                padding-left: 50%;
-                position: relative;
-                border: none;
-                border-bottom: 1px solid #eee;
-                padding-bottom: 0.5rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .workshops-table tbody td:last-child {
-                border-bottom: none;
-            }
-
-            .workshops-table tbody td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 0;
-                width: 50%;
-                padding: 0;
-                text-align: left;
-                font-weight: 600;
-                color: #666;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .workshops-table thead {
-                display: table-header-group;
-            }
-
-            .workshops-table tbody tr {
-                display: table-row;
-                border: none;
-                margin-bottom: 0;
-                padding: 0;
-            }
-
-            .workshops-table tbody td {
-                display: table-cell;
-                text-align: left;
-                padding: 0.75rem 1rem;
-                position: relative;
-                border-bottom: 1px solid #dee2e6;
-            }
-
-            .workshops-table tbody td::before {
-                display: none;
-            }
-        }
-    </style>
-
-    <div class="profile-container">
-        {% if Workshops %}
-            <!-- Profile Information Display -->
-            <h2 style="text-align: center; margin-bottom: 2rem;">User Profile</h2>
-            
-            <div class="profile-info">
-                <div class="profile-info-item">
-                    <label>First Name</label>
-                    <p>{{ coordinator_profile.user.first_name }}</p>
-                </div>
-                <div class="profile-info-item">
-                    <label>Last Name</label>
-                    <p>{{ coordinator_profile.user.last_name }}</p>
-                </div>
-                <div class="profile-info-item">
-                    <label>Email</label>
-                    <p>{{ coordinator_profile.user.email }}</p>
-                </div>
-                <div class="profile-info-item">
-                    <label>Institute</label>
-                    <p>{{ coordinator_profile.user.profile.institute }}</p>
-                </div>
-                <div class="profile-info-item">
-                    <label>Phone Number</label>
-                    <p>{{ coordinator_profile.user.profile.phone_number }}</p>
-                </div>
-                <div class="profile-info-item">
-                    <label>Department</label>
-                    <p>{{ coordinator_profile.user.profile.department }}</p>
-                </div>
-                <div class="profile-info-item">
-                    <label>Location</label>
-                    <p>{{ coordinator_profile.user.profile.location }}</p>
-                </div>
-                <div class="profile-info-item">
-                    <label>Position</label>
-                    <p>{{ coordinator_profile.user.profile.position }}</p>
-                </div>
+        <!-- Profile Information Cards -->
+        <div class="profile-grid">
+            <div class="profile-card">
+                <span class="profile-label">📧 Email</span>
+                <div class="profile-value">{{ coordinator_profile.user.email }}</div>
             </div>
+            <div class="profile-card">
+                <span class="profile-label">🏢 Institute</span>
+                <div class="profile-value">{{ coordinator_profile.user.profile.institute }}</div>
+            </div>
+            <div class="profile-card">
+                <span class="profile-label">📱 Phone</span>
+                <div class="profile-value">{{ coordinator_profile.user.profile.phone_number }}</div>
+            </div>
+            <div class="profile-card">
+                <span class="profile-label">🎓 Department</span>
+                <div class="profile-value">{{ coordinator_profile.user.profile.department }}</div>
+            </div>
+            <div class="profile-card">
+                <span class="profile-label">📍 Location</span>
+                <div class="profile-value">{{ coordinator_profile.user.profile.location }}</div>
+            </div>
+            <div class="profile-card">
+                <span class="profile-label">💼 Position</span>
+                <div class="profile-value">{{ coordinator_profile.user.profile.position }}</div>
+            </div>
+        </div>
 
-            <a href="{% url 'workshop_app:view_own_profile' %}" class="btn btn-primary" style="margin-bottom: 2rem;">
-                Edit Profile
-            </a>
+        <a href="{% url 'workshop_app:view_own_profile' %}" class="edit-btn">✏️ Edit Profile</a>
 
-            <!-- Workshop Details -->
-            <h3 class="section-title">My Workshops</h3>
-            
-            <div style="overflow-x: auto;">
+        <!-- Workshops Section -->
+        <div class="section-header">
+            <span class="section-icon">📚</span>
+            <span>My Workshops</span>
+        </div>
+
+        {% if Workshops %}
+            <div class="workshops-table-container">
                 <table class="workshops-table">
                     <thead>
                         <tr>
                             <th>Status</th>
                             <th>Instructor</th>
-                            <th>Workshop Date</th>
-                            <th>Workshop Type</th>
+                            <th>Date</th>
+                            <th>Type</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {% for workshop in Workshops %}
-                        <tr>
-                            <td data-label="Status">
-                                {% if workshop.instructor %}
-                                    <span class="badge" style="background-color: #28a745; color: white;">Assigned</span>
-                                {% else %}
-                                    <span class="badge">Pending</span>
-                                {% endif %}
-                            </td>
-                            <td data-label="Instructor">
-                                {{ workshop.instructor|default:"—" }}
-                            </td>
-                            <td data-label="Date">
-                                {{ workshop.date }}
-                            </td>
-                            <td data-label="Type">
-                                {{ workshop.workshop_type }}
-                            </td>
-                        </tr>
-                    {% endfor %}
+                        {% for workshop in Workshops %}
+                            <tr>
+                                <td>
+                                    {% if workshop.instructor %}
+                                        <span class="badge-status badge-assigned">✓ Assigned</span>
+                                    {% else %}
+                                        <span class="badge-status badge-pending">⏳ Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ workshop.instructor|default:"—" }}</td>
+                                <td>{{ workshop.date }}</td>
+                                <td>{{ workshop.workshop_type }}</td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
-
         {% else %}
-            <!-- Profile Edit Form -->
-            <h2 style="text-align: center; margin-bottom: 2rem;">Update Your Profile</h2>
-            
-            <div class="edit-form-container">
-                <form action="" method="post">
-                    {% csrf_token %}
-                    
-                    {% if form.errors %}
-                        <div class="alert alert-danger">
-                            <strong>Please correct the errors below:</strong>
-                            {% for field in form %}
-                                {% for error in field.errors %}
-                                    <div style="margin-top: 0.5rem;">
-                                        <strong>{{ field.label }}:</strong> {{ error|escape }}
-                                    </div>
-                                {% endfor %}
-                            {% endfor %}
-                            {% for error in form.non_field_errors %}
-                                <div style="margin-top: 0.5rem;">
-                                    {{ error|escape }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-
-                    {% for field in form %}
-                        <div class="form-group">
-                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {{ field }}
-                        </div>
-                    {% endfor %}
-
-                    <div class="button-group">
-                        <button type="submit" class="btn btn-success">
-                            Update Profile
-                        </button>
-                        <a href="{% url 'workshop_app:index' %}" class="btn btn-secondary">
-                            Cancel
-                        </a>
-                    </div>
-                </form>
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <p>No workshops assigned yet.</p>
             </div>
         {% endif %}
-    </div>
+
+    {% else %}
+        <!-- Profile Edit Mode -->
+        <div class="profile-header">
+            <div class="profile-header-subtitle">✏️ Update Your Profile</div>
+            <h2>Profile Settings</h2>
+        </div>
+
+        <div class="form-container">
+            <form action="" method="post">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                    <div class="error-alert">
+                        <strong>Please correct the errors below:</strong>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <div style="margin-top: 0.5rem;">
+                                    <strong>{{ field.label }}:</strong> {{ error|escape }}
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <div style="margin-top: 0.5rem;">
+                                {{ error|escape }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-submit">
+                        💾 Save Changes
+                    </button>
+                    <a href="{% url 'workshop_app:index' %}" class="btn btn-cancel">
+                        ❌ Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
