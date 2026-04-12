@@ -141,26 +141,32 @@
     }
 
     .checkbox-group {
-        display: block;
+        display: flex;
+        align-items: flex-start;
         font-size: 0.95rem;
-        overflow: visible;
         margin: 0.75rem 0;
+        gap: 12px;
     }
 
     .checkbox-group input[type="checkbox"] {
-        float: left;
-        clear: left;
-        margin-right: 0.5rem;
+        width: 20px;
+        height: 20px;
+        margin: 0;
         margin-top: 2px;
+        padding: 0;
+        flex-shrink: 0;
+        cursor: pointer;
     }
 
     .checkbox-group label {
-        display: block;
-        margin-left: 24px;
+        display: inline;
+        margin: 0;
+        padding: 0;
         white-space: normal;
         word-wrap: break-word;
         overflow-wrap: break-word;
-        line-height: 1.4;
+        line-height: 1.5;
+        cursor: pointer;
     }
 
     .comment-form textarea {
