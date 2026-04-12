@@ -1,111 +1,378 @@
 {% extends 'workshop_app/base.html' %}
 
 {% block title %}
-  Profile Statistics
+    Profile Statistics
 {% endblock %}
 
 {% block extra %}
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="{{URL_ROOT}}/static/workshop_app/js/bootstrap-3.3.7.min.js"></script>
-  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-
-	<script type="text/javascript">
-		$(function() {
-			    $( "fieldset" ).controlgroup();
-		});
-
-		$(document).ready(function() {
-		$('input[type=radio]').change(function() {
-			        if (this.value == "CP") {
-			        	var ielem = document.getElementById('instructor_data');
-			        	var celem = document.getElementById('coordinator_data');
-			        	ielem.style.display = "none";
-			        	celem.style.display = "table";
-			            }
-			        else{
-			        	var ielem = document.getElementById('instructor_data');
-			        	var celem = document.getElementById('coordinator_data');
-			        	ielem.style.display = "table";
-			        	celem.style.display = "none";
-			        }
-		});
-	});
-	</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 {% endblock %}
 
-
 {% block content %}
-	<div class="container">
-	 	<div class="row">
-			<div class="col-md-6" align="left" >
-				  <fieldset data-mini="true">
-				    <label for="radio-1">Instructor Statistics </label>
-				    <input type="radio" name="radio-1" id="radio-1" value="IP">
-				    <label for="radio-2">Coordinator Statistics</label>
-				    <input type="radio" name="radio-1" id="radio-2" value="CP">
-				  </fieldset>
-			</div>
-			<br>
-			<br>
-			<!-- Instructor Data Table -->
-				<table class="table" id="instructor_data" style="display: none">
-					<thead>
-						<tr>
-							<th></th>
-							<th>username</th>
-							<th>Full Name</th>
-							<th>Institute Name</th>
-							<th>Phone Number</th>
-							<th>Workshop Count</th>
-						</tr>
-					</thead>
-					{% csrf_token %}
-					{% for profile_data in instructor_data %}
-						<tbody>
-							<tr>
-								<td>{{ forloop.counter}}</td>
-								<td>{{ profile_data.profile.user}}</td>
-								<td>{{ profile_data.profile.user.first_name}} {{ profile_data.profile.user.last_name}}</td>
-								<td>{{ profile_data.profile.institute}}</td>
-								<td>{{ profile_data.profile.phone_number}}</td>
-								<td>{{ profile_data.count}}</td>
-							</tr>
-						</tbody>
-					{% endfor %}
-				</table>
+<style>
+    .stats-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
 
-			<!-- Coordinator Data Table -->
-				<table class="table" id="coordinator_data" style="display: none">
-					<thead>
-						<tr>
-							<th></th>
-							<th>Name</th>
-							<th>Institute Name</th>
-							<th>Phone Number</th>
-							<th>Registration Date</th>
-							<th>Workshop Count</th>
-						</tr>
-					</thead>
-					{% csrf_token %}
-					{% for profile_data in coordinator_data %}
-						<tbody>
-					{% if profile_data.count > 0 %}
-							<tr>
-								<td>{{ forloop.counter }}</td>
-								<td><a href="{{ URL_ROOT }}/view_comment_profile/{{ profile_data.profile.user.id }}">
-								{{ profile_data.profile.user.get_full_name }}</a></td>
-								<td>{{ profile_data.profile.institute}}</td>
-								<td>{{ profile_data.profile.phone_number}}</td>
-								<td>{{ profile_data.profile.user.date_joined | date}}</td>
-								<td>{{ profile_data.count}}</td>
-							</tr>
-					{% endif %}
-						</tbody>
-					{% endfor %}
-				</table>
-		</div>
-	</div>
+    .page-header {
+        background: linear-gradient(135deg, var(--color-primary), var(--color-info));
+        color: white;
+        padding: 2.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
 
+    html[data-theme="dark"] .page-header {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .page-header h2 {
+        margin: 0 0 0.5rem;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .page-header-subtitle {
+        opacity: 0.95;
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .stats-controls {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    html[data-theme="dark"] .stats-controls {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .toggle-label {
+        display: block;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .toggle-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .toggle-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        border: 2px solid var(--color-border-main);
+        border-radius: 6px;
+        background-color: var(--color-bg-secondary);
+        color: var(--color-text-primary);
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        font-size: 1rem;
+    }
+
+    .toggle-btn:hover {
+        border-color: var(--color-primary);
+        background-color: var(--color-bg-tertiary);
+    }
+
+    .toggle-btn input[type="radio"] {
+        cursor: pointer;
+    }
+
+    .toggle-btn.active {
+        background-color: var(--color-primary);
+        color: white;
+        border-color: var(--color-primary);
+    }
+
+    .stats-table-container {
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-border-main);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    html[data-theme="dark"] .stats-table-container {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .stats-table {
+        width: 100%;
+        border-collapse: collapse;
+        display: none;
+    }
+
+    .stats-table.active {
+        display: table;
+    }
+
+    .stats-table thead {
+        background: var(--color-bg-secondary);
+        border-bottom: 2px solid var(--color-border-main);
+    }
+
+    .stats-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+    }
+
+    .stats-table tbody tr {
+        border-bottom: 1px solid var(--color-border-main);
+        transition: background-color 0.2s ease;
+    }
+
+    .stats-table tbody tr:hover {
+        background-color: var(--color-bg-tertiary);
+    }
+
+    .stats-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .stats-table td {
+        padding: 1rem;
+        color: var(--color-text-secondary);
+    }
+
+    .stats-table .row-number {
+        font-weight: 600;
+        color: var(--color-text-primary);
+        width: 50px;
+    }
+
+    .stats-table .user-name {
+        color: var(--color-primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s ease;
+    }
+
+    .stats-table .user-name:hover {
+        color: var(--color-info);
+        text-decoration: underline;
+    }
+
+    .stats-table .workshop-count {
+        font-weight: 700;
+        color: var(--color-text-primary);
+        background-color: var(--color-bg-secondary);
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        display: inline-block;
+        min-width: 50px;
+        text-align: center;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: var(--color-text-secondary);
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .stats-container {
+            margin: 1rem auto;
+            padding: 0;
+        }
+
+        .page-header {
+            padding: 1.5rem;
+            border-radius: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-header h2 {
+            font-size: 1.6rem;
+        }
+
+        .stats-controls {
+            padding: 1.5rem;
+            border-radius: 0;
+        }
+
+        .toggle-buttons {
+            gap: 0.5rem;
+        }
+
+        .toggle-btn {
+            padding: 0.6rem 1rem;
+            font-size: 0.95rem;
+        }
+
+        .stats-table-container {
+            border-radius: 0;
+            overflow-x: auto;
+        }
+
+        .stats-table th,
+        .stats-table td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .stats-table .row-number {
+            width: 40px;
+        }
+    }
+</style>
+
+<div class="stats-container">
+    <div class="page-header">
+        <div class="page-header-subtitle">📊 User Statistics</div>
+        <h2>Profile Statistics</h2>
+    </div>
+
+    <!-- Toggle Controls -->
+    <div class="stats-controls">
+        <label class="toggle-label">📈 Select View</label>
+        <div class="toggle-buttons">
+            <label class="toggle-btn active">
+                <input type="radio" name="stats-filter" id="instructor-view" value="IP" checked onchange="toggleStats(this)">
+                👨‍🏫 Instructor Statistics
+            </label>
+            <label class="toggle-btn">
+                <input type="radio" name="stats-filter" id="coordinator-view" value="CP" onchange="toggleStats(this)">
+                👤 Coordinator Statistics
+            </label>
+        </div>
+    </div>
+
+    <!-- Instructor Data Table -->
+    <div class="stats-table-container">
+        <table class="stats-table active" id="instructor_data">
+            <thead>
+                <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Institute</th>
+                    <th>Phone Number</th>
+                    <th style="text-align: center;">Workshops</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if instructor_data %}
+                    {% for profile_data in instructor_data %}
+                        <tr>
+                            <td class="row-number">{{ forloop.counter }}</td>
+                            <td>{{ profile_data.profile.user }}</td>
+                            <td>{{ profile_data.profile.user.first_name }} {{ profile_data.profile.user.last_name }}</td>
+                            <td>{{ profile_data.profile.institute }}</td>
+                            <td>{{ profile_data.profile.phone_number }}</td>
+                            <td style="text-align: center;">
+                                <span class="workshop-count">{{ profile_data.count }}</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">👨‍🏫</div>
+                                <p>No instructor data available</p>
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <!-- Coordinator Data Table -->
+        <table class="stats-table" id="coordinator_data">
+            <thead>
+                <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Name</th>
+                    <th>Institute</th>
+                    <th>Phone Number</th>
+                    <th>Registration Date</th>
+                    <th style="text-align: center;">Workshops</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if coordinator_data %}
+                    {% for profile_data in coordinator_data %}
+                        {% if profile_data.count > 0 %}
+                            <tr>
+                                <td class="row-number">{{ forloop.counter }}</td>
+                                <td>
+                                    <a href="{{ URL_ROOT }}/view_comment_profile/{{ profile_data.profile.user.id }}"
+                                       class="user-name">
+                                        {{ profile_data.profile.user.get_full_name }}
+                                    </a>
+                                </td>
+                                <td>{{ profile_data.profile.institute }}</td>
+                                <td>{{ profile_data.profile.phone_number }}</td>
+                                <td>{{ profile_data.profile.user.date_joined | date }}</td>
+                                <td style="text-align: center;">
+                                    <span class="workshop-count">{{ profile_data.count }}</span>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">👤</div>
+                                <p>No coordinator data available</p>
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function toggleStats(radio) {
+        var instructorTable = document.getElementById('instructor_data');
+        var coordinatorTable = document.getElementById('coordinator_data');
+        var buttons = document.querySelectorAll('.toggle-btn');
+
+        if (radio.value === "CP") {
+            instructorTable.classList.remove('active');
+            coordinatorTable.classList.add('active');
+            buttons[1].classList.add('active');
+            buttons[0].classList.remove('active');
+        } else {
+            instructorTable.classList.add('active');
+            coordinatorTable.classList.remove('active');
+            buttons[0].classList.add('active');
+            buttons[1].classList.remove('active');
+        }
+    }
+</script>
 {% endblock %}
