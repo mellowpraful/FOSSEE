@@ -298,8 +298,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                        {% endif %}
-                        {% set proposed = True %}
+                        {% else %}
                         <tr>
                             <td><a href="{% url 'workshop_app:workshop_details' workshop.id %}" class="workshop-link">{{ workshop.workshop_type|capfirst }}</a></td>
                             <td>{{ workshop.date|date:"d M, Y" }}</td>
@@ -310,18 +309,11 @@
                                 <a href="{% url 'workshop_app:workshop_details' workshop.id %}" class="workshop-link" style="font-size: 0.9rem;">View →</a>
                             </td>
                         </tr>
-                    {% endif %}
+                        {% endif %}
                 {% endfor %}
-                {% if proposed %}
                                     </tbody>
                                 </table>
                             </div>
-                {% else %}
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📝</div>
-                        <p>No pending proposals. Propose a new workshop using the Propose Workshop tab.</p>
-                    </div>
-                {% endif %}
                 {% endwith %}
             {% else %}
                 <div class="empty-state">

@@ -339,8 +339,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                        {% endif %}
-                        {% set proposed = True %}
+                        {% else %}
                         <tr>
                             <td>
                                 <a href="{% url 'workshop_app:view_profile' workshop.coordinator.id %}" class="workshop-link">
@@ -364,16 +363,9 @@
                         </tr>
                     {% endif %}
                 {% endfor %}
-                {% if proposed %}
                                     </tbody>
                                 </table>
                             </div>
-                {% else %}
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📬</div>
-                        <p>No pending proposals from coordinators.</p>
-                    </div>
-                {% endif %}
                 {% endwith %}
             {% else %}
                 <div class="empty-state">
