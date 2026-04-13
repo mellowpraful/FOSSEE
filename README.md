@@ -84,4 +84,16 @@ You can log in with the superuser account and see all the updated pages. Try cli
 
 ## Screenshots
 
-(Add before and after screenshots here)
+## Screenshots
+
+### Before
+
+![Login](old_login.png)
+![Stats](old_stats.png)
+![Home](old_home.png)
+
+### After
+
+![Login](new_login.png)
+![Stats](new_stats.png)
+![Home](new_home.png)
