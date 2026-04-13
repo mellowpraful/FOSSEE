@@ -84,8 +84,6 @@ You can log in with the superuser account and see all the updated pages. Try cli
 
 ## Screenshots
 
-## Screenshots
-
 ### Before
 
 ![Login](old_login.png)
